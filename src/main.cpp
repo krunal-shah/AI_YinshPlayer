@@ -22,6 +22,8 @@ int main(int argc, char** argv)
 	{
 		// Get other player's move
 		cin >> move; 
+
+		// Register opponent move in our board: Krunal
 		
 		while(true) 
 		{

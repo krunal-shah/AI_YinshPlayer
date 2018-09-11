@@ -11,12 +11,10 @@ using namespace std;
 class Board {
 private:
 
-    vector<Marker> my_markers;
-    vector<Ring> my_rings;
+    vector<Marker> markers;
+    vector<Ring> rings;
 
-    vector<Marker> opp_markers;
-    vector<Ring> opp_rings;
-
+    
 public:
     Board();
     
