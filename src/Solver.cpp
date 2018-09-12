@@ -1,4 +1,5 @@
 #include "Solver.h"
+#include "Util.h"
 
 Solver::Solver(int player_id, int board_size, int time_limit)
 {
@@ -21,7 +22,6 @@ Solver::Solver(Solver* base_solver)
 
 string Solver::move()
 {
-	cerr << "No of my rings = " << current_board->no_my_rings() << endl;
 	if(current_board->no_my_rings() < 5)
 	{
 		int a = turns, b = 0;
@@ -44,23 +44,30 @@ string Solver::move()
 	return "P 10 10\n";
 }
 
-void Solver::make_opp_move(string move)
+void Solver::make_opp_move(string move_str)
 {
-	if(move[0] == 'P')
-	{
-		int a, b;
-		int i = 2, j = 2;
-		while(move[j] != ' ')
-			j++;
-		a = stoi(move.substr(i, j - i));
-		int n = move.length() - 1;
-		string temp_str = move.substr(j, n - j + 1);
-		b = stoi(temp_str, nullptr, 10);
+	vector< pair< string, pair< int, int> > > moves;
+	moves = fill_moves(move_str);
+	for(auto move:moves)
+	{	
+		int a = move.second.first;
+		int b = move.second.second;
+		string mtype = move.first;
+		if(mtype == 'P')
+		{
+			int polarity = 0;
+			Ring* new_ring = new Ring(a, b, polarity);
 
-		int polarity = 0;
-		Ring* new_ring = new Ring(a, b, polarity);
+			// filled_pos[100*a + b] = 0;
+			current_board->add_ring(new_ring);
+		}
+		else if(move[0] == 'S')
+		{
+			int polarity = 0;
+			Ring* new_ring = new Ring(a, b, polarity);
 
-		// filled_pos[100*a + b] = 0;
-		current_board->add_ring(new_ring);
+			// filled_pos[100*a + b] = 0;
+			current_board->add_ring(new_ring);
+		}
 	}
 }
