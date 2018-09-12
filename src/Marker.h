@@ -12,8 +12,9 @@ private:
     bool polarity; // 1 is ours, 0 is opp
 
 public:
-    Marker();
-    
+    Marker(int, int, int);
+    pair<int, int> get_position();
+	int get_polarity();    
     
 };
 

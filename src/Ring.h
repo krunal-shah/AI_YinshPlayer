@@ -12,9 +12,10 @@ private:
     bool polarity; // 1 is ours, 0 is opp
 
 public:
-    Ring();
-    
-    
+    Ring(int a, int b, int polarity);
+    pair<int, int> get_position();
+	int get_polarity();    
+
 };
 
 #endif  /* RING_H */
