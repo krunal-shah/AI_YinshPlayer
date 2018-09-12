@@ -21,11 +21,13 @@ Solver::Solver(Solver* base_solver)
 
 string Solver::move()
 {
+	cerr << "No of my rings = " << current_board->no_my_rings() << endl;
 	if(current_board->no_my_rings() < 5)
 	{
 		int a = turns, b = 0;
 		turns++;
-		Ring* new_ring = new Ring(a, b, 1);
+		int polarity = 1;
+		Ring* new_ring = new Ring(a, b, polarity);
 
 		// current_board->filled_pos[100*a + b] = 1;
 		current_board->add_ring(new_ring);
@@ -39,7 +41,7 @@ string Solver::move()
 	}
 
 	// Block opp move in 1 move: Aakash
-	return "P 10 10";
+	return "P 10 10\n";
 }
 
 void Solver::make_opp_move(string move)
@@ -55,7 +57,8 @@ void Solver::make_opp_move(string move)
 		string temp_str = move.substr(j, n - j + 1);
 		b = stoi(temp_str, nullptr, 10);
 
-		Ring* new_ring = new Ring(a, b, 0);
+		int polarity = 0;
+		Ring* new_ring = new Ring(a, b, polarity);
 
 		// filled_pos[100*a + b] = 0;
 		current_board->add_ring(new_ring);

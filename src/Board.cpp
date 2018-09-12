@@ -45,5 +45,15 @@ int Board::no_my_rings()
 
 void Board::add_ring(Ring* ring)
 {
-	my_rings.push_back(ring);
+	cerr << "CERR: ring polarity = " << ring->get_polarity() << endl;
+	if(ring->get_polarity() == 1)
+	{
+		cerr << "CERR: Adding ring to MY board\n";
+		my_rings.push_back(ring);
+		rings.push_back(ring);
+	}
+	else
+	{
+		rings.push_back(ring);
+	}
 }

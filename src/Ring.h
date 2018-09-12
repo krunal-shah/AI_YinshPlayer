@@ -9,7 +9,7 @@ class Ring {
 private:
 
     pair<int, int> pos;
-    bool polarity; // 1 is ours, 0 is opp
+    int polarity; // 1 is ours, 0 is opp
 
 public:
     Ring(int a, int b, int polarity);

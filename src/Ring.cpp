@@ -1,9 +1,9 @@
 #include "Ring.h"
 
-Ring::Ring(int a, int b, int polarity)
+Ring::Ring(int a, int b, int p)
 {
     pos = make_pair(a, b);
-    polarity = polarity;
+    polarity = p;
 }
 
 pair<int, int> Ring::get_position()

@@ -29,7 +29,6 @@ int main(int argc, char** argv)
 		solver->make_opp_move(move_opp);
 
 		string move_my = solver->move();
-		cerr << "CERR: Outputting move: ";
 		cout << move_my;
 		// Register opponent move in our board: Krunal
 		
@@ -43,7 +42,6 @@ int main(int argc, char** argv)
 			solver->make_opp_move(move_opp);
 			
 			string move_my = solver->move();
-			cerr << "CERR: Outputting move: " << move_my << "\n";
 			cout << move_my;
 		}
 	}   
