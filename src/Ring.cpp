@@ -15,3 +15,8 @@ int Ring::get_polarity()
 {
 	return polarity;
 }
+
+string Ring::my_type()
+{
+	return "ring";
+}

@@ -16,14 +16,17 @@ private:
     vector<Ring*> rings;
     vector<Marker*> my_markers;
     vector<Ring*> my_rings;
+    vector<void*> configuration; 
+    int board_size;
 
     unordered_map<int, int> filled_pos;
     
 public:
-    Board();
+    Board(int);
     Board(Board* base_board);
     int no_my_rings();
     void add_ring(Ring* ring);
+    int get_board_size();
     
     
 };

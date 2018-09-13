@@ -14,7 +14,8 @@ private:
 public:
     Marker(int, int, int);
     pair<int, int> get_position();
-	int get_polarity();    
+	int get_polarity();  
+	string my_type();
     
 };
 
