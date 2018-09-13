@@ -37,7 +37,7 @@ string Solver::move()
 	}
 	else
 	{
-
+		
 	}
 
 	// Block opp move in 1 move: Aakash
@@ -48,8 +48,9 @@ void Solver::make_opp_move(string move_str)
 {
 	vector< pair< string, pair< int, int> > > moves;
 	moves = fill_moves(move_str);
-	for(auto move:moves)
+	for(int i=0; i < moves.size(); i++)
 	{	
+		pair< string, pair< int, int> > move = moves[i];
 		int a = move.second.first;
 		int b = move.second.second;
 		string mtype = move.first;
@@ -63,8 +64,7 @@ void Solver::make_opp_move(string move_str)
 		}
 		else if(move[0] == 'S')
 		{
-			int polarity = 0;
-			Ring* new_ring = new Ring(a, b, polarity);
+			Ring* selected_ring = 
 
 			// filled_pos[100*a + b] = 0;
 			current_board->add_ring(new_ring);
