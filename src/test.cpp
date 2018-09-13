@@ -36,14 +36,21 @@ using namespace std;
 
 int main(int argv, char* args[])
 {
-	string a = "       P 7947 794 P      144445 141    T 144 14     ";
-	vector< pair< string, pair< int, int > > > b;
-	cout << a << endl;
-	b = fill_moves(a);
-	for(auto it:b)
-	{
-		cout << it.first << endl;
-		cout << it.second.first << endl;
-		cout << it.second.second << endl;
-	}
+	// pair<int, int> get_next_position(pair<int, int> current_position, int direction)
+
+	pair<int, int> one = make_pair(2,4);
+	pair<int, int> onea = get_next_position(one, 0);
+	cout << one.first << ", " << one.second << " -- " << onea.first << ", " << onea.second << endl;
+
+	pair<int, int> two = make_pair(1,5);
+	pair<int, int> twoa = get_next_position(two, 0);
+	cout << two.first << ", " << two.second << " -- " << twoa.first << ", " << twoa.second << endl;
+
+	// pair<int, int> one = make_pair(2,4);
+	// pair<int, int> onea = get_next_position(one, 0);
+	// cout << one.first << ", " << one.second << " -- " << onea.first << ", " << onea.second << endl;
+
+	// pair<int, int> one = make_pair(2,4);
+	// pair<int, int> onea = get_next_position(one, 0);
+	// cout << one.first << ", " << one.second << " -- " << onea.first << ", " << onea.second << endl;
 }
