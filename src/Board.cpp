@@ -6,7 +6,8 @@ Board::Board(int board_size)
     int max_positions = 2*board_size*(board_size-1) + 6*board_size + 1;
     configuration.resize(max_positions);
     
-    pair<char, void*> temp = make_pair('n', NULL);
+    void* nullp = NULL;
+    pair<char, void*> temp = make_pair('n', nullp);
     fill(configuration.begin(), configuration.end(), temp);
 }
 
@@ -41,11 +42,6 @@ int Board::no_my_rings()
 	return my_rings.size();
 }
 
-void Board::add_ring(Ring* piece)
-{
-	pair<int, int> pos = piece->get_position();
-	int index = get_board_index(pos);
-
 bool Board::out_of_bounds(pair<int,int> position)
 {
     int radius = position.first;
@@ -57,8 +53,11 @@ bool Board::out_of_bounds(pair<int,int> position)
     return false;
 }
 
-void Board::add_ring(Ring* ring)
+void Board::add_ring(Ring* piece)
 {
+	pair<int, int> pos = piece->get_position();
+	int index = get_board_index(pos);
+
 	pair<char, void*> temp = make_pair('r', piece);
 	configuration[index] = temp;
 	
@@ -90,4 +89,9 @@ int Board::get_board_size()
 pair<char, void*> Board::get_configuration(int i)
 {
 	return configuration[i];
+}
+
+void Board::set_configuration(pair<char, void*> temp, int i)
+{
+	configuration[i] = temp;
 }

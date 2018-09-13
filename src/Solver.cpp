@@ -59,7 +59,7 @@ pair<int, int> Solver::get_next_position(pair<int, int> current_position, int di
 		}
 		else if (segment == 5)
 		{
-			rel_offset -= 6;
+			rel_offset += 6;
 		}
 	}
 
@@ -136,7 +136,7 @@ string Solver::move()
 	return "P 10 10";
 }
 
-void Solver::make_opp_move(string move)
+void Solver::make_opp_move(string move_str)
 {
 	vector< pair< string, pair< int, int> > > moves;
 	moves = fill_moves(move_str);
@@ -146,7 +146,7 @@ void Solver::make_opp_move(string move)
 		int a = move.second.first;
 		int b = move.second.second;
 		string mtype = move.first;
-		if(mtype == 'P')
+		if(mtype == "P")
 		{
 			int polarity = 0;
 			Ring* new_ring = new Ring(a, b, polarity);
@@ -154,18 +154,22 @@ void Solver::make_opp_move(string move)
 			// filled_pos[100*a + b] = 0;
 			current_board->add_ring(new_ring);
 		}
-		else if(mtype == 'S')
+		else if(mtype == "S")
 		{
 			Marker* new_marker = new Marker(a, b, 0);
-			current_board->add_piece(new_marker);
+			current_board->add_marker(new_marker);
 			
 			int index = get_board_index(a, b);
-			Ring* selected_ring = configuration[index];
+			pair<char, void*> selected_pair = current_board->get_configuration(index);
+			Ring* selected_ring = (Ring*)selected_pair.second;
+			
 			pair< string, pair< int, int> > next_move = moves[i++];
-			int c = next_move.first, d = next_move.second;
+			int c = next_move.second.first, d = next_move.second.second;
 			selected_ring->move(c, d);
 			int new_index = get_board_index(c, d);
-			configuration[new_index] = selected_ring;
+
+			selected_pair.second = selected_ring;
+			current_board->set_configuration(selected_pair, new_index);
 		}
 	}
 }

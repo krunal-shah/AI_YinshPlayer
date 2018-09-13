@@ -18,6 +18,9 @@ public:
     Solver(Solver* base_solver);
     void make_opp_move(string move);
     string move();  
+
+    pair<int, int> get_next_position(pair<int, int> current_position, int direction);
+    vector<pair<int, int>> get_possible_position(pair<int, int> current_position, int direction);
 };
 
 #endif  /* SOLVER_H */
