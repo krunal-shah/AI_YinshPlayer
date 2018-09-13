@@ -53,6 +53,37 @@ bool Board::out_of_bounds(pair<int,int> position)
     return false;
 }
 
+vector< pair<int, int> > Board::get_possible_positions(pair<int, int> current_position, int direction)
+{
+	int radius = current_position.first;
+	int offset = current_position.second;
+	vector<pair<int,int>> positions;
+
+	current_position = get_next_position(current_position, direction);
+	bool marker = false;
+	while (!out_of_bounds(current_position))
+	{
+		int index = get_board_index(current_position);
+		pair<char,void*> configuration = get_configuration(index);
+		if (configuration.first == 'n')
+		{
+			positions.push_back(current_position);
+			if(marker)
+				break;
+		}
+		else if (configuration.first == 'm')
+			marker = true;
+		else
+			break;
+
+		current_position = get_next_position(current_position, direction);
+
+	}
+
+	return positions;
+
+}
+
 void Board::add_ring(Ring* piece)
 {
 	pair<int, int> pos = piece->get_position();

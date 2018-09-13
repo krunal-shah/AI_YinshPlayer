@@ -20,6 +20,47 @@ int get_board_index(int radius, int offset)
 	return 3*radius*(radius-1)+offset+1;
 }
 
+pair<int, int> get_next_position(pair<int, int> current_position, int direction)
+{
+	int radius = current_position.first;
+	int offset = current_position.second;
+	pair<int, int> next_position;
+
+	//radius change
+	int axis = (direction+3)%3;
+	int rel_offset = (6*radius + offset - direction*radius)%(6*radius);
+	int segment = rel_offset > 3*radius ? (6 + (rel_offset + 1)/radius )%6 : (6 + (rel_offset - 1)/radius )%6;
+
+	if( segment == 0 || segment == 5 )
+		radius++;
+	if( segment == 2 || segment == 3 )
+		radius--;
+
+	//offset change
+	if( segment == 1 )
+		rel_offset--;
+	else if (segment == 4)
+		rel_offset++;
+	else
+	{
+		if (segment == 2 || segment == 3)
+		{
+			rel_offset -= 3;
+		}
+		else if (segment == 5)
+		{
+			rel_offset += 6;
+		}
+	}
+
+	offset = (rel_offset + direction*radius)%(6*radius);
+
+	next_position.first = radius;
+	next_position.second = offset;
+
+	return next_position;
+}
+
 vector<pair<string, pair< int, int> > > fill_moves(string m)
 {
 	int i=0, j=0;

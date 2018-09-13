@@ -29,6 +29,8 @@ public:
 
     int get_board_size();
     bool out_of_bounds(pair<int,int>);
+
+    vector<pair <int, int> > get_possible_positions(pair<int, int> current_position, int direction);
 };
 
 #endif  /* BOARD_H */
