@@ -1,5 +1,25 @@
 #include "Util.h"
 
+
+int get_board_index(pair<int,int> position)
+{
+	int radius = position.first;
+	int offset = position.second;
+
+	if(radius == 0 && offset == 0)
+		return 0;
+
+	return 3*radius*(radius-1)+offset+1;
+}
+
+int get_board_index(int radius, int offset)
+{
+	if(radius == 0 && offset == 0)
+		return 0;
+
+	return 3*radius*(radius-1)+offset+1;
+}
+
 vector<pair<string, pair< int, int> > > fill_moves(string m)
 {
 	int i=0, j=0;

@@ -27,8 +27,7 @@ public:
     int no_my_rings();
     void add_ring(Ring* ring);
     int get_board_size();
-    
-    
+    bool out_of_bounds(pair<int,int>);
 };
 
 #endif  /* BOARD_H */

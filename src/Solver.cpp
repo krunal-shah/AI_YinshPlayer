@@ -16,24 +16,63 @@ Solver::Solver(Solver* base_solver)
 
 // Add constructor to copy a board : Krunal(Done)
 // Given a position and a direction, return possible end positions: Aakash
-vector<pair<int, int>> Solver::get_possible_position(pair<int, int> current_position, int direction)
+/*vector<pair<int, int>> Solver::get_possible_position(pair<int, int> current_position, int direction)
 {
 	int radius = current_position.first;
 	int offset = current_position.second;
+	vector<pair<int,int>> positions;
 
-	if( direction*radius == offset )
+	current_position = get_next_position(current_position, direction);
+	while (!current_board->out_of_bounds(current_position))
 	{
-		// lies on axis
-		markers = current_board->markers;
-		rings = current_board->rings;
+
 	}
-	else
-	{
-		// does not lie on axis
-	}
-}
+
+}*/
 
 pair<int, int> Solver::get_next_position(pair<int, int> current_position, int direction)
+{
+	int radius = current_position.first;
+	int offset = current_position.second;
+	pair<int, int> next_position;
+
+	//radius change
+	int axis = (direction+3)%3;
+	int rel_offset = (6*radius + offset - direction*radius)%(6*radius);
+	int segment = rel_offset > 3*radius ? (6 + (rel_offset + 1)/radius )%6 : (6 + (rel_offset - 1)/radius )%6;
+
+	if( segment == 0 || segment == 5 )
+		radius++;
+	if( segment == 2 || segment == 3 )
+		radius--;
+
+	//offset change
+	if( segment == 1 )
+		rel_offset--;
+	else if (segment == 4)
+		rel_offset++;
+	else
+	{
+		if (segment == 2 || segment == 3)
+		{
+			rel_offset -= 3;
+		}
+		else if (segment == 5)
+		{
+			rel_offset -= 6;
+		}
+	}
+
+	offset = (rel_offset + direction*radius)%(6*radius);
+
+	next_position.first = radius;
+	next_position.second = offset;
+
+	return next_position;
+}
+
+
+/*pair<int, int> Solver::get_next_position(pair<int, int> current_position, int direction)
 {
 	int radius = current_position.first;
 	int offset = current_position.second;
@@ -42,15 +81,12 @@ pair<int, int> Solver::get_next_position(pair<int, int> current_position, int di
 	if( direction*radius == offset )
 	{
 		// lies on axis (same direction)
-		next_position.first = radius + 1;
-		next_position.second = offset;
-
+		radius++;
 	}
 	else if ( direction*radius == (offset+3*radius)%(6*radius) )
 	{
 		//lies on axis (opp direction)
-		next_position.first = radius - 1;
-		next_position.second = offset;
+		radius--;
 	}
 	else
 	{
@@ -58,18 +94,22 @@ pair<int, int> Solver::get_next_position(pair<int, int> current_position, int di
 		segment = offset/radius;
 		if( direction == (segment + 5)%6 )
 		{
-
+			offset--;
 		}
 		else if ( direction == (segment + 2)%6 )
 		{
-			/* code */
+			offset++;
 		}
-		else if ( direction ==  )
+		else if ( direction == segment )
 		{
-			/* code */
+			radius++;
+		}
+		else if ( direction == (segment + 3)%6 )
+		{
+
 		}
 	}
-}
+}*/
 // Basic 5 window return moves and scores : Krunal
 
 

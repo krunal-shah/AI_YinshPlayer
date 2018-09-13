@@ -51,6 +51,17 @@ int Board::get_board_size()
     return board_size;
 }
 
+bool Board::out_of_bounds(pair<int,int> position)
+{
+    int radius = position.first;
+    int offset = position.second;
+
+    if (radius>board_size || (radius == board_size && radius*(offset/radius) == offset))
+        return true;
+
+    return false;
+}
+
 void Board::add_ring(Ring* ring)
 {
 	cerr << "CERR: ring polarity = " << ring->get_polarity() << endl;
