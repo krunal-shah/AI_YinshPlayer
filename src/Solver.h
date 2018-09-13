@@ -5,6 +5,7 @@
 #include<fstream>
 #include<vector>
 #include "Board.h"
+#include "Util.h"
 using namespace std;
 
 class Solver {
