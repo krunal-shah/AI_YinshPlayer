@@ -1,9 +1,8 @@
 #include "Solver.h"
-#include "Util.h"
 
 Solver::Solver(int player_id, int board_size, int time_limit)
 {
-    current_board = new Board();
+    current_board = new Board(board_size);
     turns = 1;
 }
 
@@ -17,6 +16,60 @@ Solver::Solver(Solver* base_solver)
 
 // Add constructor to copy a board : Krunal(Done)
 // Given a position and a direction, return possible end positions: Aakash
+vector<pair<int, int>> Solver::get_possible_position(pair<int, int> current_position, int direction)
+{
+	int radius = current_position.first;
+	int offset = current_position.second;
+
+	if( direction*radius == offset )
+	{
+		// lies on axis
+		markers = current_board->markers;
+		rings = current_board->rings;
+	}
+	else
+	{
+		// does not lie on axis
+	}
+}
+
+pair<int, int> Solver::get_next_position(pair<int, int> current_position, int direction)
+{
+	int radius = current_position.first;
+	int offset = current_position.second;
+	pair<int, int> next_position;
+
+	if( direction*radius == offset )
+	{
+		// lies on axis (same direction)
+		next_position.first = radius + 1;
+		next_position.second = offset;
+
+	}
+	else if ( direction*radius == (offset+3*radius)%(6*radius) )
+	{
+		//lies on axis (opp direction)
+		next_position.first = radius - 1;
+		next_position.second = offset;
+	}
+	else
+	{
+		// does not lie on axis
+		segment = offset/radius;
+		if( direction == (segment + 5)%6 )
+		{
+
+		}
+		else if ( direction == (segment + 2)%6 )
+		{
+			/* code */
+		}
+		else if ( direction ==  )
+		{
+			/* code */
+		}
+	}
+}
 // Basic 5 window return moves and scores : Krunal
 
 
@@ -26,8 +79,7 @@ string Solver::move()
 	{
 		int a = turns, b = 0;
 		turns++;
-		int polarity = 1;
-		Ring* new_ring = new Ring(a, b, polarity);
+		Ring* new_ring = new Ring(a, b, 1);
 
 		// current_board->filled_pos[100*a + b] = 1;
 		current_board->add_ring(new_ring);
@@ -41,11 +93,12 @@ string Solver::move()
 	}
 
 	// Block opp move in 1 move: Aakash
-	return "P 10 10\n";
+	return "P 10 10";
 }
 
-void Solver::make_opp_move(string move_str)
+void Solver::make_opp_move(string move)
 {
+<<<<<<< HEAD
 	vector< pair< string, pair< int, int> > > moves;
 	moves = fill_moves(move_str);
 	for(int i=0; i < moves.size(); i++)
@@ -65,9 +118,6 @@ void Solver::make_opp_move(string move_str)
 		else if(move[0] == 'S')
 		{
 			Ring* selected_ring = 
-
-			// filled_pos[100*a + b] = 0;
-			current_board->add_ring(new_ring);
 		}
 	}
 }
