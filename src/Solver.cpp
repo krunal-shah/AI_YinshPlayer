@@ -129,7 +129,7 @@ string Solver::move()
 	}
 	else
 	{
-
+		
 	}
 
 	// Block opp move in 1 move: Aakash
@@ -138,20 +138,26 @@ string Solver::move()
 
 void Solver::make_opp_move(string move)
 {
-	if(move[0] == 'P')
-	{
-		int a, b;
-		int i = 2, j = 2;
-		while(move[j] != ' ')
-			j++;
-		a = stoi(move.substr(i, j - i));
-		int n = move.length() - 1;
-		string temp_str = move.substr(j, n - j + 1);
-		b = stoi(temp_str, nullptr, 10);
+<<<<<<< HEAD
+	vector< pair< string, pair< int, int> > > moves;
+	moves = fill_moves(move_str);
+	for(int i=0; i < moves.size(); i++)
+	{	
+		pair< string, pair< int, int> > move = moves[i];
+		int a = move.second.first;
+		int b = move.second.second;
+		string mtype = move.first;
+		if(mtype == 'P')
+		{
+			int polarity = 0;
+			Ring* new_ring = new Ring(a, b, polarity);
 
-		Ring* new_ring = new Ring(a, b, 0);
-
-		// filled_pos[100*a + b] = 0;
-		current_board->add_ring(new_ring);
+			// filled_pos[100*a + b] = 0;
+			current_board->add_ring(new_ring);
+		}
+		else if(move[0] == 'S')
+		{
+			Ring* selected_ring = 
+		}
 	}
 }
