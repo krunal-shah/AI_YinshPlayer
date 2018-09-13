@@ -138,7 +138,6 @@ string Solver::move()
 
 void Solver::make_opp_move(string move)
 {
-<<<<<<< HEAD
 	vector< pair< string, pair< int, int> > > moves;
 	moves = fill_moves(move_str);
 	for(int i=0; i < moves.size(); i++)
@@ -155,9 +154,18 @@ void Solver::make_opp_move(string move)
 			// filled_pos[100*a + b] = 0;
 			current_board->add_ring(new_ring);
 		}
-		else if(move[0] == 'S')
+		else if(mtype == 'S')
 		{
-			Ring* selected_ring = 
+			Marker* new_marker = new Marker(a, b, 0);
+			current_board->add_piece(new_marker);
+			
+			int index = get_board_index(a, b);
+			Ring* selected_ring = configuration[index];
+			pair< string, pair< int, int> > next_move = moves[i++];
+			int c = next_move.first, d = next_move.second;
+			selected_ring->move(c, d);
+			int new_index = get_board_index(c, d);
+			configuration[new_index] = selected_ring;
 		}
 	}
 }
