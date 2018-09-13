@@ -16,8 +16,3 @@ int Marker::get_polarity()
 {
 	return polarity;
 }
-
-string Marker::my_type()
-{
-	return "marker";
-}

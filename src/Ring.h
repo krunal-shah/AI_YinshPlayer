@@ -15,7 +15,7 @@ public:
     Ring(int a, int b, int polarity);
     pair<int, int> get_position();
 	int get_polarity();    
-	string my_type();
+	void move(int a,int b);
 
 };
 

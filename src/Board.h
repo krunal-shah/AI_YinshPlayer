@@ -7,25 +7,25 @@
 #include <unordered_map>
 #include "Ring.h"
 #include "Marker.h"
+#include "Util.h"
 using namespace std;
 
 class Board {
 private:
 
-    vector<Marker*> markers;
-    vector<Ring*> rings;
     vector<Marker*> my_markers;
     vector<Ring*> my_rings;
-    vector<void*> configuration; 
+    vector<char, void*> configuration; 
     int board_size;
 
-    unordered_map<int, int> filled_pos;
-    
 public:
     Board(int);
     Board(Board* base_board);
     int no_my_rings();
-    void add_ring(Ring* ring);
+    void add_ring(Ring*);
+    void add_marker(Marker*);
+    pair<char, void*> get_configuration(int);
+
     int get_board_size();
     
     

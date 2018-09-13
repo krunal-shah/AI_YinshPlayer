@@ -16,7 +16,8 @@ int Ring::get_polarity()
 	return polarity;
 }
 
-string Ring::my_type()
+void Ring::move(int a, int b)
 {
-	return "ring";
+	a = a;
+	b = b;
 }
