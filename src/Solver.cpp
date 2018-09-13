@@ -16,19 +16,36 @@ Solver::Solver(Solver* base_solver)
 
 // Add constructor to copy a board : Krunal(Done)
 // Given a position and a direction, return possible end positions: Aakash
-/*vector<pair<int, int>> Solver::get_possible_position(pair<int, int> current_position, int direction)
+vector<pair<int, int>> Solver::get_possible_position(pair<int, int> current_position, int direction)
 {
 	int radius = current_position.first;
 	int offset = current_position.second;
 	vector<pair<int,int>> positions;
 
 	current_position = get_next_position(current_position, direction);
+	bool marker = false;
 	while (!current_board->out_of_bounds(current_position))
 	{
+		int index = get_board_index(current_position);
+		pair<char,void*> configuration = current_board->get_configuration(index)
+		if (configuration.first == "n")
+		{
+			positions.push_back(current_position);
+			if(marker)
+				break;
+		}
+		else if (configuration.first == "m")
+			marker = true;
+		else
+			break;
+
+		current_position = get_next_position(current_position, direction);
 
 	}
 
-}*/
+	return positions;
+
+}
 
 pair<int, int> Solver::get_next_position(pair<int, int> current_position, int direction)
 {
