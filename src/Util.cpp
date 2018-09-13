@@ -26,33 +26,38 @@ pair<int, int> get_next_position(pair<int, int> current_position, int direction)
 	int offset = current_position.second;
 	pair<int, int> next_position;
 
-	//radius change
-	int axis = (direction+3)%3;
 	int rel_offset = (6*radius + offset - direction*radius)%(6*radius);
-	int segment = rel_offset > 3*radius ? (6 + (rel_offset + 1)/radius )%6 : (6 + (rel_offset - 1)/radius )%6;
-
-	if( segment == 0 || segment == 5 )
-		radius++;
-	if( segment == 2 || segment == 3 )
-		radius--;
-
-	//offset change
-	if( segment == 1 )
-		rel_offset--;
-	else if (segment == 4)
-		rel_offset++;
+	
+	int segment;
+	if(rel_offset <= radius || rel_offset >= 5*radius)
+		segment = 0;
+	else if(rel_offset <= 2*radius || rel_offset >= 4*radius)
+		segment = 1;
 	else
+		segment = 2;
+
+	if(segment == 0)
 	{
-		if (segment == 2 || segment == 3)
-		{
-			rel_offset -= 3;
-		}
-		else if (segment == 5)
+		if( rel_offset >= 5*radius)
 		{
 			rel_offset += 6;
 		}
+		radius++;
 	}
-
+	else if(segment == 1)
+	{
+		if( rel_offset >= 4*radius)
+		{
+			rel_offset++;
+		}
+		else
+			rel_offset--;
+	}
+	else
+	{
+		radius--;
+		rel_offset -= 3;
+	}
 	offset = (rel_offset + direction*radius)%(6*radius);
 
 	next_position.first = radius;
