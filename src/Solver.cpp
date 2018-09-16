@@ -93,6 +93,25 @@ void Solver::make_opp_move(string move_str)
 			int c = next_move.second.first, d = next_move.second.second;
 			current_board->move_ring(selected_ring, c, d);
 		}
+		else if(mtype == "RS")
+		{
+			int index = get_board_index(a, b);
+			pair<char, void*> selected_pair = current_board->get_configuration(index);
+			Marker* first_marker = (Marker*)selected_pair.second;
+
+			index = get_board_index(moves[++i].second);
+			selected_pair = current_board->get_configuration(index);
+			Marker* last_marker = (Marker*)selected_pair.second;
+
+			current_board -> remove_markers(first_marker, last_marker);
+
+			index = get_board_index(moves[++i].second);
+			selected_pair = current_board->get_configuration(index);
+			Ring* selected_ring = (Ring*)selected_pair.second;		
+			
+			current_board -> remove_ring(selected_ring);
+
+		}
 	}
 
 	current_board->print_board();
@@ -110,18 +129,18 @@ pair<int, vector<int> > Solver::alpha_beta(Board* temp, int depth, int final_dep
 		ans.second = ret;
 		return ans;
 	}
-	cerr << "Entering get_neighbours" << endl;
+	// cerr << "Entering get_neighbours" << endl;
 	vector<pair<pair<int,int>, pair<int,int>>> neighbours = Solver::get_neighbours(temp, (1+depth)%2);
-	cerr << "Exiting get_neighbours" << endl;
+	// cerr << "Exiting get_neighbours" << endl;
 	int index = 0;
 	int res_score = depth%2 == 0 ? INT_MIN : INT_MAX;
-	cerr<<"here"<<endl;
+	// cerr<<"here"<<endl;
 	for (int i=0; i<neighbours.size();i++)
 	{
 		cerr<<i<<endl;
 		Board* child = generate_board(temp, neighbours[i], (1+depth)%2);
 		counter++;
-		cerr << "Board no " << counter << endl;; 
+		// cerr << "Board no " << counter << endl;; 
 		
 		pair<int, vector<int> > move = alpha_beta(child, depth+1, final_depth, counter);
 
@@ -146,6 +165,7 @@ pair<int, vector<int> > Solver::alpha_beta(Board* temp, int depth, int final_dep
 
 		delete child;
 	}
+	// cerr<<"here?"<<endl;
 
 	vector<int> ret_vec(4);
 	ret_vec[0] = neighbours[index].first.first;
@@ -167,6 +187,8 @@ vector<pair<pair<int,int>, pair<int,int>>> Solver::get_neighbours(Board* my_boar
 	else
 		my_rings = my_board->get_opp_rings();
 
+	// cerr<<"size "<<my_rings.size()<<endl;
+
 	for (int i=0;i<my_rings.size();i++)
 	{
 		// cerr<<i<<endl;
@@ -176,6 +198,7 @@ vector<pair<pair<int,int>, pair<int,int>>> Solver::get_neighbours(Board* my_boar
 		{
 			//cerr<<direction<<endl;
 			vector<pair<int,int>> possible_positions = my_board->get_possible_positions(current_position, direction);
+			// cerr<<"size "<<possible_positions.size()<<endl;
 			//cerr<<"problem?"<<endl;//
 			for (int j=0;j<possible_positions.size();j++)
 			{
@@ -184,14 +207,15 @@ vector<pair<pair<int,int>, pair<int,int>>> Solver::get_neighbours(Board* my_boar
 				elem.second = possible_positions[j];
 				neighbours.push_back(elem);
 			}
+			// cerr<<"size "<<neighbours.size()<<endl;
 		}
 	}
 
-	cerr << "Printing neighbours" << endl;
-	for(int i=0; i<neighbours.size(); i++)
-	{
-		cerr << neighbours[i].first.first << " " << neighbours[i].first.second << " " << neighbours[i].second.first << " " << neighbours[i].second.second << endl;
-	}
+	// cerr << "Printing neighbours" << endl;
+	// for(int i=0; i<neighbours.size(); i++)
+	// {
+	// 	cerr << neighbours[i].first.first << " " << neighbours[i].first.second << " " << neighbours[i].second.first << " " << neighbours[i].second.second << endl;
+	// }
 
 	return neighbours;
 }
@@ -200,16 +224,16 @@ Board* Solver::generate_board(Board* my_board, pair<pair<int,int>, pair<int,int>
 {
 	Board* new_board = new Board(my_board);
 	cerr << "Printing new board" << endl;
-	new_board->print_board();
+	// new_board->print_board();
 
 	pair<int, int> ring_pos = neighbour.first;
 	int	index = get_board_index(ring_pos);
 	cerr << "Index = " << index << " ring_pos " << ring_pos.first << " " << ring_pos.second << " " << polarity << endl;
 
 	pair<char, void*> whoa = new_board->get_configuration(index);
-	cerr << "ehy" << whoa.first << endl;
-	whoa = my_board->get_configuration(index);
-	cerr << "ehy" << whoa.first << endl;
+	// cerr << "ehy" << whoa.first << endl;
+	// whoa = my_board->get_configuration(index);
+	// cerr << "ehy" << whoa.first << endl;
 	Ring* ring = (Ring*)new_board->get_configuration(index).second;
 
 	pair<int,int> final_position = neighbour.second;

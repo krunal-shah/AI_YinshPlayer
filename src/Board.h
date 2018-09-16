@@ -44,6 +44,10 @@ public:
     void print_board();
     void move_ring(Ring* ring, int a, int b);
     void move_ring(Ring* ring, pair<int,int>);
+
+    void remove_markers(Marker* first_marker, Marker* last_marker);
+    void remove_ring(Ring* ring);
+    void remove_markers(pair<int,int> a, pair<int,int> b, int polarity);
 };
 
 #endif  /* BOARD_H */

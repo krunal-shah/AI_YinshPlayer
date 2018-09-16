@@ -156,3 +156,19 @@ int fill_move(string m, string &ch, int &a, int &b)
 	}
 	return 1;
 }
+
+int get_direction(pair<int,int> initial_position, pair<int,int> final_position)
+{
+	int direction = 0;
+	pair<int,int> current_position = initial_position;
+	for (int i=0;i<6;i++)
+	{
+		for(int j=0;j<5;j++)
+			current_position = get_next_position(current_position, direction);
+
+		if(current_position.first == final_position.first && current_position.second == final_position.second)
+			break;
+
+	}
+	return direction;
+}
