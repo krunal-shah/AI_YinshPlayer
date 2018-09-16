@@ -16,8 +16,7 @@ int Ring::get_polarity()
 	return polarity;
 }
 
-void Ring::move(int a, int b)
+void Ring::move(int x, int y)
 {
-	a = a;
-	b = b;
+	pos = make_pair(x,y);
 }

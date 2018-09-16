@@ -4,7 +4,7 @@
 Board::Board(int bsize)
 {
     board_size = bsize;
-    int max_positions = 2*board_size*(board_size-1) + 6*board_size + 1;
+    int max_positions = 3*board_size*(board_size-1) + 6*board_size + 1;
     configuration.resize(max_positions);
     
     void* nullp = NULL;
@@ -15,16 +15,15 @@ Board::Board(int bsize)
 Board::Board(Board* base_board)
 {
     board_size = base_board->get_board_size();
-    int max_positions = 2*board_size*(board_size-1) + 6*board_size + 1;
+    int max_positions = 3*board_size*(board_size-1) + 6*board_size + 1;
     configuration.resize(max_positions);
     
     void* nullp = NULL;
     pair<char, void*> temp = make_pair('n', nullp);
-    fill(configuration.begin(), configuration.end(), temp);
     
     for(int i=0; i < configuration.size(); i++)
     {
-    	pair<char, void*> temp = make_pair(configuration[i].first, configuration[i].second);
+    	pair<char, void*> temp = base_board->get_configuration(i);
     	configuration[i] = temp;
     }
 
@@ -61,22 +60,16 @@ bool Board::out_of_bounds(pair<int,int> position)
     int radius = position.first;
     int offset = position.second;
 
-    // cerr << "Entering out of bound for " << radius << " " << offset << endl; 
-
     if(radius == 0)
     {
-    	// cerr << "Exiting out of bound for " << radius << " " << offset << endl;
     	return false;
 	}
 
     if (radius>board_size || (radius == board_size && offset%board_size == 0))
     {
-    	// cerr << "Board size == " << board_size;
-    	// cerr << "Exiting out of bound for true " << radius << " " << offset << endl;
     	return true;
 	}
-	// cerr << "Exiting out of bound for " << radius << " " << offset << endl;
-    return false;
+	return false;
 }
 
 int Board::score()
@@ -89,15 +82,15 @@ int Board::score()
 	int lower = 2*board_size+1;
 
 	queue<int> lastfive;
-	int current_index;
+	int current_at;
 	pair<char, void*> current_elem;
 	pair<char, void*> popped_elem;
 	int elems_lastfive = 0;
 	int rings_lastfive = 0;
 	
 	pair<int, int> current_pos;
-	pair<int, int> next_pos;
-
+	int current_index;
+	
 	
 	for (int direction = 0; direction < 3; ++direction)
 	{
@@ -110,7 +103,6 @@ int Board::score()
 			{
 				// cerr << "CERR: At position: " << current_pos.first << " " << current_pos.second << endl;
 				// cerr << "Value of elems_lastfive " << elems_lastfive << " " << ", value of rings_lastfive " << rings_lastfive << endl;
-				next_pos = get_next_position(current_pos, direction);
 				// cerr << "At check 1" << endl;
 				current_index = get_board_index(current_pos); 
 				// cerr << "At check 2" << endl;
@@ -163,7 +155,7 @@ int Board::score()
 				}
 
 				lastfive.push(current_index);
-				current_pos = next_pos;
+				current_pos = get_next_position(current_pos, direction);
 				if(elems_lastfive == 5 && rings_lastfive <= 1)
 				{
 					score += 5;
@@ -243,6 +235,7 @@ void Board::add_marker(Marker* piece)
 	pair<int, int> pos = piece->get_position();
 	int index = get_board_index(pos);
 
+	cerr << "Putting marker at " << pos.first << " " << pos.second << " index = " << index << endl;
 	pair<char, void*> temp = make_pair('m', piece);
 	configuration[index] = temp;
 	
@@ -262,9 +255,11 @@ pair<char, void*> Board::get_configuration(int i)
 	return configuration[i];
 }
 
-void Board::set_configuration(pair<char, void*> temp, int i)
+void Board::set_configuration(char ch, void* ptr, int i)
 {
-	configuration[i] = temp;
+	cerr << "Playing with config at " << i << endl;
+	configuration[i] = make_pair(ch, ptr);
+	cerr << "New config " << configuration[i].first << endl;
 }
 vector<Ring*> Board::get_my_rings()
 {
@@ -273,4 +268,78 @@ vector<Ring*> Board::get_my_rings()
 vector<Ring*> Board::get_opp_rings()
 {
 	return opp_rings;
+}
+void Board::print_board()
+{
+	// vector<Marker*> my_markers;
+	// vector<Ring*> my_rings;
+	// vector<Ring*> opp_rings;
+	// vector< pair< char, void*> > configuration; 
+	// int board_size;
+
+	cerr << "My markers" << endl;
+	for (int i = 0; i < my_markers.size(); ++i)
+	{
+		pair<int, int> pos = my_markers[i]->get_position();
+		cerr << "Marker " << i << " at " << pos.first << " " << pos.second << endl;
+	}
+
+	cerr << "My rings" << endl;
+	for (int i = 0; i < my_rings.size(); ++i)
+	{
+		pair<int, int> pos = my_rings[i]->get_position();
+		cerr << "Ring " << i << " at " << pos.first << " " << pos.second << endl;
+	}
+
+	cerr << "Opp rings" << endl;
+	for (int i = 0; i < opp_rings.size(); ++i)
+	{
+		pair<int, int> pos = opp_rings[i]->get_position();
+		cerr << "Ring " << i << " at " << pos.first << " " << pos.second << endl;
+	}
+
+	cerr << "Configuration " << configuration.size() << endl;
+	for (int i = 0; i < configuration.size(); ++i)
+	{
+		pair< char, void*> pos = configuration[i];
+		// cerr << pos.first << endl;
+		if(pos.first == 'r')
+		{
+			// cerr << "here" << endl;
+			Ring* ring = (Ring*)pos.second;
+			cerr << "ring at " << ring->get_position().first << " " << ring->get_position().second << " at index " << i << " polarity = " << ring->get_polarity() << endl;
+		}
+		else if(pos.first == 'm')
+		{
+			// cerr << "here" << endl;
+			Marker* marker = (Marker*)pos.second;
+			cerr << "marker at " << marker->get_position().first << " " << marker->get_position().second << " at index " << i << " polarity = " << marker->get_polarity() << endl;
+		}
+	}
+}
+
+void Board::move_ring(Ring* ring, int a, int b)
+{
+	pair<int, int> ring_pos = ring->get_position();
+	cerr << "polarity of ring trying to move " << ring->get_polarity() << endl;
+	Marker* marker = new Marker(ring_pos.first, ring_pos.second, ring->get_polarity());
+
+	int index = get_board_index(a,b);
+	cerr << "Trying to move ring to " << a << " " << b << " from " << ring_pos.first << " " << ring_pos.second << endl;
+	set_configuration('r', ring, index);
+	// cerr << "Set configuration" << endl;
+	// print_board();
+
+	ring->move(a,b);
+	add_marker(marker);
+	cerr << "Moved marker" << endl;
+	print_board();	
+}
+
+void Board::move_ring(Ring* ring, pair<int, int> pos)
+{
+	int a = pos.first;
+	int b = pos.second;
+
+	move_ring(ring, a, b);
 }
