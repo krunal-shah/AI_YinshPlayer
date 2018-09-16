@@ -2,6 +2,7 @@
 
 Solver::Solver(int player_id, int board_size, int time_limit)
 {
+    cerr << "Solver got board_size = " << board_size << endl;
     current_board = new Board(board_size);
     turns = 1;
 }
@@ -28,6 +29,9 @@ string Solver::move()
 
 		// current_board->filled_pos[100*a + b] = 1;
 		current_board->add_ring(new_ring);
+		cerr << "CERR: Entering score " << endl;
+		current_board->score();
+		cerr << "CERR: Exiting score " << endl;
 		
 		string move_str = "P " + to_string(a) + " " + to_string(b) + " \n";
 		return move_str;

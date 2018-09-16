@@ -1,8 +1,10 @@
 #include "Board.h"
 
-Board::Board(int board_size)
+
+Board::Board(int bsize)
 {
-    board_size = board_size;
+    board_size = bsize;
+    cerr << "Constructor board_size " << board_size << endl;;
     int max_positions = 2*board_size*(board_size-1) + 6*board_size + 1;
     configuration.resize(max_positions);
     
@@ -47,10 +49,126 @@ bool Board::out_of_bounds(pair<int,int> position)
     int radius = position.first;
     int offset = position.second;
 
-    if (radius>board_size || (radius == board_size && radius*(offset/radius) == offset))
-        return true;
+    // cerr << "Entering out of bound for " << radius << " " << offset << endl; 
 
+    if(radius == 0)
+    {
+    	// cerr << "Exiting out of bound for " << radius << " " << offset << endl;
+    	return false;
+	}
+
+    if (radius>board_size || (radius == board_size && offset%board_size == 0))
+    {
+    	cerr << "Board size == " << board_size;
+    	// cerr << "Exiting out of bound for true " << radius << " " << offset << endl;
+    	return true;
+	}
+	// cerr << "Exiting out of bound for " << radius << " " << offset << endl;
     return false;
+}
+
+int Board::score()
+{
+	vector< int > done(0);
+
+	int score = 0;
+
+	int upper = 4*board_size-1;
+	int lower = 2*board_size+1;
+
+	queue<int> lastfive;
+	int current_index;
+	pair<char, void*> current_elem;
+	pair<char, void*> popped_elem;
+	int elems_lastfive = 0;
+	int rings_lastfive = 0;
+	
+	pair<int, int> current_pos;
+	pair<int, int> next_pos;
+
+	
+	for (int direction = 0; direction < 3; ++direction)
+	{
+		// cerr << "CERR: Direction " << direction << endl;
+		for (int offset = lower; offset <= upper; offset++)
+		{
+			current_pos = make_pair(board_size, offset);
+
+			while(!out_of_bounds(current_pos))
+			{
+				// cerr << "CERR: At position: " << current_pos.first << " " << current_pos.second << endl;
+				// cerr << "Value of elems_lastfive " << elems_lastfive << " " << ", value of rings_lastfive " << rings_lastfive << endl;
+				next_pos = get_next_position(current_pos, direction);
+				// cerr << "At check 1" << endl;
+				current_index = get_board_index(current_pos); 
+				// cerr << "At check 2" << endl;
+				current_elem = configuration[current_index];
+				// cerr << "At check 3" << endl;
+
+				if(lastfive.size() == 5)
+				{
+					popped_elem = configuration[lastfive.front()];
+					lastfive.pop();
+					
+					if(popped_elem.first == 'R')
+					{
+						Ring* popped_ring = (Ring*)popped_elem.second;
+						if(popped_ring->get_polarity() == 1)
+							elems_lastfive --;
+						else
+							elems_lastfive ++;
+
+						rings_lastfive --;
+					}
+					else if(popped_elem.first == 'M')
+					{
+						Marker* popped_marker = (Marker*)popped_elem.second;
+						if(popped_marker->get_polarity() == 1)
+							elems_lastfive --;
+						else
+							elems_lastfive ++;
+					}
+				}
+
+
+				if(current_elem.first == 'R')
+				{
+					Ring* current_ring = (Ring*)current_elem.second;
+					if(current_ring->get_polarity() == 1)
+						elems_lastfive ++;
+					else
+						elems_lastfive --;
+
+					rings_lastfive ++;
+				}
+				else if(current_elem.first == 'M')
+				{
+					Marker* current_marker = (Marker*)current_elem.second;
+					if(current_marker->get_polarity() == 1)
+						elems_lastfive ++;
+					else
+						elems_lastfive --;
+				}
+
+				lastfive.push(current_index);
+				current_pos = next_pos;
+				if(elems_lastfive == 5 && rings_lastfive <= 1)
+				{
+					score += 5;
+				}
+				else if(elems_lastfive == -5 && rings_lastfive <= 1)
+				{
+					score -= 5;
+				}
+			}
+			// cerr << "Exited out of bounds for " << current_pos.first << " " << current_pos.second << endl;
+		}
+
+		upper += board_size; // upper could be 6*board_size
+		lower += board_size;
+	} 
+
+	return score;
 }
 
 vector< pair<int, int> > Board::get_possible_positions(pair<int, int> current_position, int direction)

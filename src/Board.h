@@ -5,6 +5,7 @@
 #include<fstream>
 #include<vector>
 #include <unordered_map>
+#include <queue> 
 #include "Ring.h"
 #include "Marker.h"
 #include "Util.h"
@@ -31,6 +32,8 @@ public:
     bool out_of_bounds(pair<int,int>);
 
     vector<pair <int, int> > get_possible_positions(pair<int, int> current_position, int direction);
+
+    int score();
 };
 
 #endif  /* BOARD_H */

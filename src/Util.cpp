@@ -26,6 +26,13 @@ pair<int, int> get_next_position(pair<int, int> current_position, int direction)
 	int offset = current_position.second;
 	pair<int, int> next_position;
 
+	if(radius == 0)
+	{
+		next_position.first = 1;
+		next_position.second = direction;
+		return next_position;	
+	}
+
 	int rel_offset = (6*radius + offset - direction*radius)%(6*radius);
 	
 	int segment;
