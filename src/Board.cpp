@@ -98,19 +98,17 @@ int Board::score()
 			{
 				// cerr << "CERR: At position: " << current_pos.first << " " << current_pos.second << endl;
 				// cerr << "Value of elems_lastfive " << elems_lastfive << " " << ", value of rings_lastfive " << rings_lastfive << endl;
-				next_pos = get_next_position(current_pos, direction);
-				// cerr << "At check 1" << endl;
 				current_index = get_board_index(current_pos); 
-				// cerr << "At check 2" << endl;
+				// cerr << "At check 1" << endl;
 				current_elem = configuration[current_index];
-				// cerr << "At check 3" << endl;
+				// cerr << "At check 2" << endl;
 
 				if(lastfive.size() == 5)
 				{
 					popped_elem = configuration[lastfive.front()];
 					lastfive.pop();
 					
-					if(popped_elem.first == 'R')
+					if(popped_elem.first == 'r')
 					{
 						Ring* popped_ring = (Ring*)popped_elem.second;
 						if(popped_ring->get_polarity() == 1)
@@ -120,7 +118,7 @@ int Board::score()
 
 						rings_lastfive --;
 					}
-					else if(popped_elem.first == 'M')
+					else if(popped_elem.first == 'm')
 					{
 						Marker* popped_marker = (Marker*)popped_elem.second;
 						if(popped_marker->get_polarity() == 1)
@@ -131,7 +129,7 @@ int Board::score()
 				}
 
 
-				if(current_elem.first == 'R')
+				if(current_elem.first == 'r')
 				{
 					Ring* current_ring = (Ring*)current_elem.second;
 					if(current_ring->get_polarity() == 1)
@@ -141,7 +139,7 @@ int Board::score()
 
 					rings_lastfive ++;
 				}
-				else if(current_elem.first == 'M')
+				else if(current_elem.first == 'm')
 				{
 					Marker* current_marker = (Marker*)current_elem.second;
 					if(current_marker->get_polarity() == 1)
@@ -151,7 +149,6 @@ int Board::score()
 				}
 
 				lastfive.push(current_index);
-				current_pos = next_pos;
 				if(elems_lastfive == 5 && rings_lastfive <= 1)
 				{
 					score += 5;
@@ -160,6 +157,8 @@ int Board::score()
 				{
 					score -= 5;
 				}
+				
+				current_pos = get_next_position(current_pos, direction);;
 			}
 			// cerr << "Exited out of bounds for " << current_pos.first << " " << current_pos.second << endl;
 		}
