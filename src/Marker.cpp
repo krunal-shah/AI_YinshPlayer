@@ -1,10 +1,9 @@
 #include "Marker.h"
 
-Marker::Marker(int a, int b, int polarity)
+Marker::Marker(int a, int b, int p)
 {
- 	a = a;
- 	b = b;
- 	polarity = polarity;   
+ 	pos = make_pair(a, b);
+ 	polarity = p;   
 }
 
 pair<int, int> Marker::get_position()

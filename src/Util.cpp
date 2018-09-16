@@ -65,6 +65,14 @@ pair<int, int> get_next_position(pair<int, int> current_position, int direction)
 		radius--;
 		rel_offset -= 3;
 	}
+
+	if(radius==0)
+	{
+		next_position.first = 0;
+		next_position.second = 0;
+		return next_position;
+	}
+
 	offset = (rel_offset + direction*radius)%(6*radius);
 
 	next_position.first = radius;
