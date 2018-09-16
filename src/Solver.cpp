@@ -42,6 +42,8 @@ string Solver::move()
 		int ring_pos = get_board_index(a);
 		Ring* ring = (Ring*)current_board->get_configuration(ring_pos).second;
 		
+		current_board->print_board();
+
 		current_board->move_ring(ring, b);
 		move_str = "S " + to_string(a.first) + " " + to_string(a.second) + " M " + to_string(b.first) + " " + to_string(b.second);
 

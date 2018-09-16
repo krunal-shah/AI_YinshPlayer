@@ -276,7 +276,7 @@ vector<vector<int>> Board::detect_success()
 				{
 					vector<int> temp_ans(4);
 					Marker* cur_mark = (Marker*)(current_elem.second);
-					Marker* sec_mark = (Marker*)(get_configuration(lastfive.back()).second);
+					Marker* sec_mark = (Marker*)(get_configuration(lastfive.front()).second);
 					temp_ans[0] = cur_mark->get_position().first;
 					temp_ans[1] = cur_mark->get_position().second;
 					temp_ans[2] = sec_mark->get_position().first;
@@ -312,7 +312,7 @@ vector< pair<int, int> > Board::get_possible_positions(pair<int, int> current_po
 	// cerr<<"position "<<current_position.first<<" "<<current_position.second<<endl;
 	while (!out_of_bounds(current_position))
 	{	
-		cerr << "Currently at " << current_position.first << " " << current_position.second << endl;
+		// cerr << "Currently at " << current_position.first << " " << current_position.second << endl;
 		// cerr<<"out of?"<<endl;
 		// cerr<<count++<<endl;
 		int index = get_board_index(current_position);
@@ -410,35 +410,35 @@ void Board::print_board()
 	// vector< pair< char, void*> > configuration; 
 	// int board_size;
 
-	// cerr << "My markers" << endl;
+	cerr << "My markers" << endl;
 	for (int i = 0; i < my_markers.size(); ++i)
 	{
 		pair<int, int> pos = my_markers[i]->get_position();
-		// cerr << "Marker " << i << " at " << pos.first << " " << pos.second << endl;
+		cerr << "Marker " << i << " at " << pos.first << " " << pos.second << endl;
 	}
 
-	// cerr << "My rings" << endl;
+	cerr << "My rings" << endl;
 	for (int i = 0; i < my_rings.size(); ++i)
 	{
 		pair<int, int> pos = my_rings[i]->get_position();
-		// cerr << "Ring " << i << " at " << pos.first << " " << pos.second << endl;
+		cerr << "Ring " << i << " at " << pos.first << " " << pos.second << endl;
 	}
 
-	// cerr << "Opp rings" << endl;
+	cerr << "Opp rings" << endl;
 	for (int i = 0; i < opp_rings.size(); ++i)
 	{
 		pair<int, int> pos = opp_rings[i]->get_position();
-		// cerr << "Ring " << i << " at " << pos.first << " " << pos.second << endl;
+		cerr << "Ring " << i << " at " << pos.first << " " << pos.second << endl;
 	}
 
-	// cerr << "Opp markers" << endl;
+	cerr << "Opp markers" << endl;
 	for (int i = 0; i < opp_markers.size(); ++i)
 	{
 		pair<int, int> pos = opp_markers[i]->get_position();
-		// cerr << "Marker " << i << " at " << pos.first << " " << pos.second << endl;
+		cerr << "Marker " << i << " at " << pos.first << " " << pos.second << endl;
 	}
 
-	// cerr << "Configuration " << configuration.size() << endl;
+	cerr << "Configuration " << configuration.size() << endl;
 	for (int i = 0; i < configuration.size(); ++i)
 	{
 		pair< char, void*> pos = configuration[i];
@@ -447,13 +447,13 @@ void Board::print_board()
 		{
 			// cerr << "here" << endl;
 			Ring* ring = (Ring*)pos.second;
-			// cerr << "ring at " << ring->get_position().first << " " << ring->get_position().second << " at index " << i << " polarity = " << ring->get_polarity() << endl;
+			cerr << "ring at " << ring->get_position().first << " " << ring->get_position().second << " at index " << i << " polarity = " << ring->get_polarity() << endl;
 		}
 		else if(pos.first == 'm')
 		{
 			// cerr << "here" << endl;
 			Marker* marker = (Marker*)pos.second;
-			// cerr << "marker at " << marker->get_position().first << " " << marker->get_position().second << " at index " << i << " polarity = " << marker->get_polarity() << endl;
+			cerr << "marker at " << marker->get_position().first << " " << marker->get_position().second << " at index " << i << " polarity = " << marker->get_polarity() << endl;
 		}
 	}
 }
@@ -461,7 +461,7 @@ void Board::print_board()
 void Board::move_ring(Ring* ring, int a, int b)
 {
 	pair<int, int> ring_pos = ring->get_position();
-	cerr << "polarity of ring trying to move " << ring->get_polarity() << endl;
+	// cerr << "polarity of ring trying to move " << ring->get_polarity() << endl;
 	Marker* marker = new Marker(ring_pos.first, ring_pos.second, ring->get_polarity());
 
 	int index = get_board_index(a,b);
@@ -480,6 +480,7 @@ void Board::move_ring(Ring* ring, int a, int b)
 		{
 			Marker* mark = (Marker*)configuration[ind].second;
 			mark->flip_polarity();
+			cerr << "Flipping " << mark->get_position().first << " " << mark->get_position().second << " " << mark->get_polarity() << endl;
 		}
 		current_position = get_next_position(current_position, direction);
 	}
