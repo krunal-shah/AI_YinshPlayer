@@ -17,7 +17,6 @@ Solver::Solver(Solver* base_solver)
 // Add constructor to copy a board : Krunal(Done)
 // Given a position and a direction, return possible end positions: Aakash
 
-
 string Solver::move()
 {
 	if(current_board->no_my_rings() < 5)
@@ -78,3 +77,67 @@ void Solver::make_opp_move(string move_str)
 		}
 	}
 }
+string Solver:alpha_beta(Board* temp, int depth, int final_depth)
+{
+	vector<pair<Ring*, pair<int,int>>> neighbours = Solver::get_neighbours(temp);
+	int index = 0;
+	int res_score = depth%2 == 0 ? INT_MAX : INT_MIN
+	for (int i=0; i<neighbours.size();i++)
+	{
+		Board* child = generate_board(temp, neighbours[i]);
+		int score = depth == final_depth ? child->score() : Solver::alpha_beta(child, depth+1, final_depth);
+		if(depth%2 == 0 ? score > res_score : score < res_score)
+		{
+			res_score = score;
+			index = i;
+		}
+	}
+
+	return neighbours[index];
+}
+
+vector<pair<Ring*, pair<int,int>>> Solver::get_neighbours(Board* my_board)
+{
+	vector<pair<Ring*, pair<int,int>>> neighbours;
+	vector<Ring*> my_rings = my_board->my_rings;
+
+	for (int i=0;i<my_rings.size();i++)
+	{
+		Ring* current_ring = my_rings[i];
+		pair<int,int> current_position = current_ring->get_position();
+		for(int direction=0; direction<6;direction++)
+		{
+			vector<pair<int,int>> possible_positions = my_board->get_possible_positions(current_position, direction);
+			for (int j=0;j<possible_positions.size();j++)
+			{
+				pair<Ring*, pair<int,int>> elem;
+				elem.first = current_ring;
+				elem.second = possible_positions[j];
+				neighbours.push_back(elem);
+			}
+		}
+	}
+
+	return neighbours;
+}
+
+Board* generate_board(Board* my_board, pair<Ring*, pair<int,int>> neighbour)
+{
+	Board* new_board = new Board(my_board);
+	vector<Ring*> rings = new_board->my_rings;
+	pair<int,int> my_pos = neighbour.first->get_position;
+
+	int index = 0;
+	for (int i=0;i<rings.size();i++)
+	{
+		pair<int,int> pos = rings[i]->get_position();
+		if(pos.first == my_pos && pos.second == my_pos.second)
+			index = i;
+	}
+
+	pair<int,int> final_position = rings[index]->get_position();
+	rings[i]->move(final_position.first, final_position.second);
+
+	return new_board;
+}
+
