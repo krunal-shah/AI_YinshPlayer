@@ -88,15 +88,12 @@ bool Board::out_of_bounds(pair<int,int> position)
 
 int Board::score()
 {
-	vector< int > done(0);
-
 	int score = 0;
 
 	int upper = 4*board_size-1;
 	int lower = 2*board_size+1;
 
 	queue<int> lastfive;
-	int current_at;
 	pair<char, void*> current_elem;
 	pair<char, void*> popped_elem;
 	int elems_lastfive = 0;
@@ -192,6 +189,111 @@ int Board::score()
 	return score;
 }
 
+vector<vector<int>> Board::detect_success()
+{
+	vector<vector<int>> ans;
+	int upper = 4*board_size-1;
+	int lower = 2*board_size+1;
+
+	queue<int> lastfive;
+	pair<char, void*> current_elem;
+	pair<char, void*> popped_elem;
+	int elems_lastfive = 0;
+	int rings_lastfive = 0;
+	
+	pair<int, int> current_pos;
+	int current_index;
+	
+	
+	for (int direction = 0; direction < 3; ++direction)
+	{
+		// cerr << "CERR: Direction " << direction << endl;
+		for (int offset = lower; offset <= upper; offset++)
+		{
+			current_pos = make_pair(board_size, offset);
+
+			while(!out_of_bounds(current_pos))
+			{
+				// cerr << "CERR: At position: " << current_pos.first << " " << current_pos.second << endl;
+				// cerr << "Value of elems_lastfive " << elems_lastfive << " " << ", value of rings_lastfive " << rings_lastfive << endl;
+				// cerr << "At check 1" << endl;
+				current_index = get_board_index(current_pos); 
+				// cerr << "At check 2" << endl;
+				current_elem = configuration[current_index];
+				// cerr << "At check 3" << endl;
+
+				if(lastfive.size() == 5)
+				{
+					popped_elem = configuration[lastfive.front()];
+					lastfive.pop();
+					
+					if(popped_elem.first == 'r')
+					{
+						Ring* popped_ring = (Ring*)popped_elem.second;
+						if(popped_ring->get_polarity() == 1)
+							elems_lastfive --;
+						else
+							elems_lastfive ++;
+
+						rings_lastfive --;
+					}
+					else if(popped_elem.first == 'm')
+					{
+						Marker* popped_marker = (Marker*)popped_elem.second;
+						if(popped_marker->get_polarity() == 1)
+							elems_lastfive --;
+						else
+							elems_lastfive ++;
+					}
+				}
+
+
+				if(current_elem.first == 'r')
+				{
+					Ring* current_ring = (Ring*)current_elem.second;
+					if(current_ring->get_polarity() == 1)
+						elems_lastfive ++;
+					else
+						elems_lastfive --;
+
+					rings_lastfive ++;
+				}
+				else if(current_elem.first == 'm')
+				{
+					Marker* current_marker = (Marker*)current_elem.second;
+					if(current_marker->get_polarity() == 1)
+						elems_lastfive ++;
+					else
+						elems_lastfive --;
+				}
+
+				lastfive.push(current_index);
+
+				if(elems_lastfive == 5 && rings_lastfive == 0)
+				{
+					vector<int> temp_ans(4);
+					Marker* cur_mark = (Marker*)(current_elem.second);
+					Marker* sec_mark = (Marker*)(get_configuration(lastfive.back()).second);
+					temp_ans[0] = cur_mark->get_position().first;
+					temp_ans[1] = cur_mark->get_position().second;
+					temp_ans[2] = sec_mark->get_position().first;
+					temp_ans[3] = sec_mark->get_position().second;
+					ans.push_back(temp_ans);
+				}
+				
+				current_pos = get_next_position(current_pos, direction);;
+			}
+			// cerr << "Exited out of bounds for " << current_pos.first << " " << current_pos.second << endl;
+		}
+
+		upper += board_size; // upper could be 6*board_size
+		lower += board_size;
+	} 
+
+	return ans;
+}
+
+
 vector< pair<int, int> > Board::get_possible_positions(pair<int, int> current_position, int direction)
 {
 	int radius = current_position.first;
@@ -207,6 +309,7 @@ vector< pair<int, int> > Board::get_possible_positions(pair<int, int> current_po
 	cerr<<"position "<<current_position.first<<" "<<current_position.second<<endl;
 	while (!out_of_bounds(current_position))
 	{	
+		cerr << "Currently at " << current_position.first << " " << current_position.second << endl;
 		// cerr<<"out of?"<<endl;
 		// cerr<<count++<<endl;
 		int index = get_board_index(current_position);

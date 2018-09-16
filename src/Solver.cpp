@@ -43,16 +43,31 @@ string Solver::move()
 		Ring* ring = (Ring*)current_board->get_configuration(ring_pos).second;
 		
 		current_board->move_ring(ring, b);
-		move_str = "S " + to_string(a.first) + " " + to_string(a.second) + " M " + to_string(b.first) + " " + to_string(b.second)+" \n";
+		move_str = "S " + to_string(a.first) + " " + to_string(a.second) + " M " + to_string(b.first) + " " + to_string(b.second);
 
-		vector<Ring*> rings = current_board->get_my_rings();
-
-		cerr << "Our move is " << move_str << endl;
- 		for (int i=0;i<rings.size();i++)
+		vector<vector<int>> to_remove_markers = current_board->detect_success();
+		for (int i = 0; i < to_remove_markers.size(); ++i)
 		{
-			pair<int,int> pos = rings[i]->get_position();
-			cerr<<pos.first<<" "<<pos.second<<endl;
+			move_str += " RS " + to_string(to_remove_markers[i][0]) + " " + to_string(to_remove_markers[i][1]) + " RE " + to_string(to_remove_markers[i][2]) + " " + to_string(to_remove_markers[i][3]);
+
+			pair<int, int> one_end = make_pair(to_remove_markers[i][0], to_remove_markers[i][1]);
+			pair<int, int> second_end = make_pair(to_remove_markers[i][2], to_remove_markers[i][3]);
+			current_board->remove_markers(one_end, second_end, 1);
+			
+			Ring* ring_to_remove = decide_remove_ring();
+			current_board->remove_ring(ring_to_remove);
+			pair<int, int> pos_ring_to_remove = ring_to_remove->get_position();
+
+			move_str += " X " + to_string(pos_ring_to_remove.first) + " " + to_string(pos_ring_to_remove.second);
 		}
+		move_str = move_str + "\n";
+
+		// cerr << "Our move is " << move_str << endl;
+ 	// 	for (int i=0;i<rings.size();i++)
+		// {
+		// 	pair<int,int> pos = rings[i]->get_position();
+		// 	cerr<<pos.first<<" "<<pos.second<<endl;
+		// }
 	}
 
 	// Block opp move in 1 move: Aakash
@@ -137,7 +152,7 @@ pair<int, vector<int> > Solver::alpha_beta(Board* temp, int depth, int final_dep
 	// cerr<<"here"<<endl;
 	for (int i=0; i<neighbours.size();i++)
 	{
-		cerr<<i<<endl;
+		// cerr<<i<<endl;
 		Board* child = generate_board(temp, neighbours[i], (1+depth)%2);
 		counter++;
 		// cerr << "Board no " << counter << endl;; 
@@ -191,9 +206,9 @@ vector<pair<pair<int,int>, pair<int,int>>> Solver::get_neighbours(Board* my_boar
 
 	for (int i=0;i<my_rings.size();i++)
 	{
-		// cerr<<i<<endl;
 		Ring* current_ring = my_rings[i];
 		pair<int,int> current_position = current_ring->get_position();
+		// cerr<<"Finding neighbours for ring " << i << " which is at position " << current_position.first << " " << current_position.second <<endl;
 		for(int direction=0; direction<6;direction++)
 		{
 			//cerr<<direction<<endl;
@@ -202,6 +217,7 @@ vector<pair<pair<int,int>, pair<int,int>>> Solver::get_neighbours(Board* my_boar
 			//cerr<<"problem?"<<endl;//
 			for (int j=0;j<possible_positions.size();j++)
 			{
+				// cerr << "Possible positio " << possible_positions[j].first << " " << possible_positions[j].second << endl;
 				pair<pair<int,int>, pair<int,int>> elem;
 				elem.first = current_position;
 				elem.second = possible_positions[j];
@@ -223,12 +239,12 @@ vector<pair<pair<int,int>, pair<int,int>>> Solver::get_neighbours(Board* my_boar
 Board* Solver::generate_board(Board* my_board, pair<pair<int,int>, pair<int,int>> neighbour, int polarity)
 {
 	Board* new_board = new Board(my_board);
-	cerr << "Printing new board" << endl;
+	// cerr << "Printing new board" << endl;
 	// new_board->print_board();
 
 	pair<int, int> ring_pos = neighbour.first;
 	int	index = get_board_index(ring_pos);
-	cerr << "Index = " << index << " ring_pos " << ring_pos.first << " " << ring_pos.second << " " << polarity << endl;
+	// cerr << "Index = " << index << " ring_pos " << ring_pos.first << " " << ring_pos.second << " " << polarity << endl;
 
 	pair<char, void*> whoa = new_board->get_configuration(index);
 	// cerr << "ehy" << whoa.first << endl;
@@ -240,5 +256,10 @@ Board* Solver::generate_board(Board* my_board, pair<pair<int,int>, pair<int,int>
 	new_board->move_ring(ring, final_position.first, final_position.second);
 	
 	return new_board;
+}
+
+Ring* Solver::decide_remove_ring()
+{
+	return current_board->get_my_rings()[0];
 }
 

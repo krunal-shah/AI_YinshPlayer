@@ -22,6 +22,8 @@ public:
     pair<int, vector<int> > alpha_beta(Board* temp, int depth, int final_depth, int &counter);
     vector<pair<pair<int,int>, pair<int,int>>> get_neighbours(Board* my_board, int polarity);
     Board* generate_board(Board* my_board, pair<pair<int,int>, pair<int,int>> neighbour, int polarity);
+
+    Ring* decide_remove_ring();
 };
 
 #endif  /* SOLVER_H */
