@@ -129,7 +129,7 @@ void Solver::make_opp_move(string move_str)
 		}
 	}
 
-	current_board->print_board();
+	// current_board->print_board();
 }
 
 pair<int, vector<int> > Solver::alpha_beta(Board* temp, int depth, int final_depth, int &counter)
@@ -196,7 +196,7 @@ pair<int, vector<int> > Solver::alpha_beta(Board* temp, int depth, int final_dep
 vector<pair<pair<int,int>, pair<int,int>>> Solver::get_neighbours(Board* my_board, int polarity)
 {
 	vector<pair<pair<int,int>, pair<int,int>>> neighbours;
-	vector<Ring*> my_rings;
+	vector<Ring*>* my_rings;
 	if (polarity == 1)
 		my_rings = my_board->get_my_rings();
 	else
@@ -204,9 +204,9 @@ vector<pair<pair<int,int>, pair<int,int>>> Solver::get_neighbours(Board* my_boar
 
 	// cerr<<"size "<<my_rings.size()<<endl;
 
-	for (int i=0;i<my_rings.size();i++)
+	for (int i=0;i<my_rings->size();i++)
 	{
-		Ring* current_ring = my_rings[i];
+		Ring* current_ring = my_rings->at(i);
 		pair<int,int> current_position = current_ring->get_position();
 		// cerr<<"Finding neighbours for ring " << i << " which is at position " << current_position.first << " " << current_position.second <<endl;
 		for(int direction=0; direction<6;direction++)
@@ -260,6 +260,6 @@ Board* Solver::generate_board(Board* my_board, pair<pair<int,int>, pair<int,int>
 
 Ring* Solver::decide_remove_ring()
 {
-	return current_board->get_my_rings()[0];
+	return (*current_board->get_my_rings())[0];
 }
 

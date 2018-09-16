@@ -166,8 +166,11 @@ int get_direction(pair<int,int> initial_position, pair<int,int> final_position)
 		for(int j=0;j<5;j++)
 			current_position = get_next_position(current_position, direction);
 
-		if(current_position.first == final_position.first && current_position.second == final_position.second)
+		if(current_position == final_position)
+		{
+			direction = i;
 			break;
+		}
 
 	}
 	return direction;

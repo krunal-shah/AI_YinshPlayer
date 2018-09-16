@@ -31,8 +31,8 @@ public:
     pair<char, void*> get_configuration(int);
     void set_configuration(char, void*, int);
     
-    vector<Ring*> get_my_rings();
-    vector<Ring*> get_opp_rings();
+    vector<Ring*>* get_my_rings();
+    vector<Ring*>* get_opp_rings();
 
     int get_board_size();
     bool out_of_bounds(pair<int,int>);

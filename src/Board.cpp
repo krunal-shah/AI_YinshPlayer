@@ -269,6 +269,9 @@ vector<vector<int>> Board::detect_success()
 
 				lastfive.push(current_index);
 
+				cerr << "Detect" << endl;
+				cerr << current_pos.first << " " << current_pos.second << " " << direction << " " << elems_lastfive << " " << rings_lastfive << endl;
+
 				if(elems_lastfive == 5 && rings_lastfive == 0)
 				{
 					vector<int> temp_ans(4);
@@ -306,7 +309,7 @@ vector< pair<int, int> > Board::get_possible_positions(pair<int, int> current_po
 	// cerr<<"hello?"<<endl;
 	bool marker = false;
 	int count = 0;
-	cerr<<"position "<<current_position.first<<" "<<current_position.second<<endl;
+	// cerr<<"position "<<current_position.first<<" "<<current_position.second<<endl;
 	while (!out_of_bounds(current_position))
 	{	
 		cerr << "Currently at " << current_position.first << " " << current_position.second << endl;
@@ -361,7 +364,7 @@ void Board::add_marker(Marker* piece)
 	pair<int, int> pos = piece->get_position();
 	int index = get_board_index(pos);
 
-	cerr << "Putting marker at " << pos.first << " " << pos.second << " index = " << index << endl;
+	// cerr << "Putting marker at " << pos.first << " " << pos.second << " index = " << index << endl;
 	pair<char, void*> temp = make_pair('m', piece);
 	configuration[index] = temp;
 	
@@ -387,17 +390,17 @@ pair<char, void*> Board::get_configuration(int i)
 
 void Board::set_configuration(char ch, void* ptr, int i)
 {
-	cerr << "Playing with config at " << i << endl;
+	// cerr << "Playing with config at " << i << endl;
 	configuration[i] = make_pair(ch, ptr);
-	cerr << "New config " << configuration[i].first << endl;
+	// cerr << "New config " << configuration[i].first << endl;
 }
-vector<Ring*> Board::get_my_rings()
+vector<Ring*>* Board::get_my_rings()
 {
-	return my_rings;
+	return &my_rings;
 }
-vector<Ring*> Board::get_opp_rings()
+vector<Ring*>* Board::get_opp_rings()
 {
-	return opp_rings;
+	return &opp_rings;
 }
 void Board::print_board()
 {
@@ -407,35 +410,35 @@ void Board::print_board()
 	// vector< pair< char, void*> > configuration; 
 	// int board_size;
 
-	cerr << "My markers" << endl;
+	// cerr << "My markers" << endl;
 	for (int i = 0; i < my_markers.size(); ++i)
 	{
 		pair<int, int> pos = my_markers[i]->get_position();
 		// cerr << "Marker " << i << " at " << pos.first << " " << pos.second << endl;
 	}
 
-	cerr << "My rings" << endl;
+	// cerr << "My rings" << endl;
 	for (int i = 0; i < my_rings.size(); ++i)
 	{
 		pair<int, int> pos = my_rings[i]->get_position();
 		// cerr << "Ring " << i << " at " << pos.first << " " << pos.second << endl;
 	}
 
-	cerr << "Opp rings" << endl;
+	// cerr << "Opp rings" << endl;
 	for (int i = 0; i < opp_rings.size(); ++i)
 	{
 		pair<int, int> pos = opp_rings[i]->get_position();
 		// cerr << "Ring " << i << " at " << pos.first << " " << pos.second << endl;
 	}
 
-	cerr << "Opp markers" << endl;
+	// cerr << "Opp markers" << endl;
 	for (int i = 0; i < opp_markers.size(); ++i)
 	{
 		pair<int, int> pos = opp_markers[i]->get_position();
 		// cerr << "Marker " << i << " at " << pos.first << " " << pos.second << endl;
 	}
 
-	cerr << "Configuration " << configuration.size() << endl;
+	// cerr << "Configuration " << configuration.size() << endl;
 	for (int i = 0; i < configuration.size(); ++i)
 	{
 		pair< char, void*> pos = configuration[i];
@@ -484,7 +487,7 @@ void Board::move_ring(Ring* ring, int a, int b)
 	ring->move(a,b);
 	add_marker(marker);
 	// cerr << "Moved marker" << endl;
-	print_board();	
+	// print_board();	
 }
 
 void Board::move_ring(Ring* ring, pair<int, int> pos)
@@ -506,17 +509,17 @@ void Board::remove_markers(Marker* first_marker, Marker* last_marker)
 		int index = get_board_index(current_marker->get_position());
 		set_configuration('n', NULL, index);
 
-		vector<Marker*> markers;
+		vector<Marker*>* markers;
 		if (polarity == 1)
-			markers = my_markers;
+			markers = &my_markers;
 		else
-			markers = opp_markers;
+			markers = &opp_markers;
 
-		for (int i=0;i<markers.size();i++)
+		for (int i=0;i<markers->size();i++)
 		{
-			pair<int,int> pos = markers[i]->get_position();
+			pair<int,int> pos = markers->at(i)->get_position();
 			if(pos.first == current_position.first && pos.second == current_position.second)
-				markers.erase(markers.begin()+i);
+				markers->erase(markers->begin()+i);
 		}
 		current_position = get_next_position(current_marker->get_position(), direction);
 	}
@@ -541,17 +544,17 @@ void Board::remove_ring(Ring* ring)
 
 	pair<int,int> position = ring->get_position();
 
-	vector<Ring*> rings;
+	vector<Ring*>* rings;
 	if (polarity == 1)
-		rings = my_rings;
+		rings = &my_rings;
 	else
-		rings = opp_rings;
+		rings = &opp_rings;
 	
-	for (int i=0;i<rings.size();i++)
+	for (int i=0;i<rings->size();i++)
 	{
-		pair<int,int> pos = rings[i]->get_position();
+		pair<int,int> pos = rings->at(i)->get_position();
 		if(pos.first == position.first && pos.second == position.second)
-			rings.erase(rings.begin()+i);
+			rings->erase(rings->begin()+i);
 	}
 
 }
