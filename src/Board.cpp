@@ -49,21 +49,21 @@ bool Board::out_of_bounds(pair<int,int> position)
     int radius = position.first;
     int offset = position.second;
 
-    // cerr << "Entering out of bound for " << radius << " " << offset << endl; 
+    cerr << "Entering out of bound for " << radius << " " << offset << endl; 
 
     if(radius == 0)
     {
-    	// cerr << "Exiting out of bound for " << radius << " " << offset << endl;
+    	cerr << "Exiting out of bound for " << radius << " " << offset << endl;
     	return false;
 	}
 
     if (radius>board_size || (radius == board_size && offset%board_size == 0))
     {
     	cerr << "Board size == " << board_size;
-    	// cerr << "Exiting out of bound for true " << radius << " " << offset << endl;
+    	cerr << "Exiting out of bound for true " << radius << " " << offset << endl;
     	return true;
 	}
-	// cerr << "Exiting out of bound for " << radius << " " << offset << endl;
+	cerr << "Exiting out of bound for " << radius << " " << offset << endl;
     return false;
 }
 
@@ -97,13 +97,13 @@ int Board::score()
 			while(!out_of_bounds(current_pos))
 			{
 				// cerr << "CERR: At position: " << current_pos.first << " " << current_pos.second << endl;
-				// cerr << "Value of elems_lastfive " << elems_lastfive << " " << ", value of rings_lastfive " << rings_lastfive << endl;
+				cerr << "Value of elems_lastfive " << elems_lastfive << " " << ", value of rings_lastfive " << rings_lastfive << endl;
 				next_pos = get_next_position(current_pos, direction);
-				// cerr << "At check 1" << endl;
+				cerr << "At check 1" << endl;
 				current_index = get_board_index(current_pos); 
-				// cerr << "At check 2" << endl;
+				cerr << "At check 2" << endl;
 				current_elem = configuration[current_index];
-				// cerr << "At check 3" << endl;
+				cerr << "At check 3" << endl;
 
 				if(lastfive.size() == 5)
 				{
@@ -243,4 +243,8 @@ pair<char, void*> Board::get_configuration(int i)
 void Board::set_configuration(pair<char, void*> temp, int i)
 {
 	configuration[i] = temp;
+}
+vector<Ring*> Board::get_my_rings()
+{
+	return my_rings;
 }

@@ -27,6 +27,7 @@ public:
     void add_marker(Marker*);
     pair<char, void*> get_configuration(int);
     void set_configuration(pair<char, void*>, int);
+    vector<Ring*> get_my_rings();
 
     int get_board_size();
     bool out_of_bounds(pair<int,int>);
