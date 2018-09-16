@@ -15,3 +15,8 @@ int Marker::get_polarity()
 {
 	return polarity;
 }
+
+void Marker::flip_polarity()
+{
+	polarity = 1 - polarity;
+}

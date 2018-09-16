@@ -466,6 +466,20 @@ void Board::move_ring(Ring* ring, int a, int b)
 	set_configuration('r', ring, index);
 	// cerr << "Set configuration" << endl;
 	// print_board();
+	pair<int,int> final_pos = make_pair(a,b);
+	int direction = get_direction(ring_pos, final_pos);
+	pair<int,int> current_position = get_next_position(ring_pos, direction);
+
+	while(!out_of_bounds(current_position) && !(current_position == final_pos))
+	{
+		int ind = get_board_index(current_position);
+		if( configuration[ind].first == 'm')
+		{
+			Marker* mark = (Marker*)configuration[ind].second;
+			mark->flip_polarity();
+		}
+		current_position = get_next_position(current_position, direction);
+	}
 
 	ring->move(a,b);
 	add_marker(marker);
@@ -475,10 +489,7 @@ void Board::move_ring(Ring* ring, int a, int b)
 
 void Board::move_ring(Ring* ring, pair<int, int> pos)
 {
-	int a = pos.first;
-	int b = pos.second;
-
-	move_ring(ring, a, b);
+	move_ring(ring, pos.first, pos.second);
 }
 
 void Board::remove_markers(Marker* first_marker, Marker* last_marker)
