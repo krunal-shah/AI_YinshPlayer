@@ -16,6 +16,7 @@ private:
 
     vector<Marker*> my_markers;
     vector<Ring*> my_rings;
+    vector<Ring*> opp_rings;
     vector< pair< char, void*> > configuration; 
     int board_size;
 
@@ -28,6 +29,7 @@ public:
     pair<char, void*> get_configuration(int);
     void set_configuration(pair<char, void*>, int);
     vector<Ring*> get_my_rings();
+    vector<Ring*> get_opp_rings();
 
     int get_board_size();
     bool out_of_bounds(pair<int,int>);

@@ -4,7 +4,6 @@
 Board::Board(int bsize)
 {
     board_size = bsize;
-    cerr << "Constructor board_size " << board_size << endl;;
     int max_positions = 2*board_size*(board_size-1) + 6*board_size + 1;
     configuration.resize(max_positions);
     
@@ -16,6 +15,12 @@ Board::Board(int bsize)
 Board::Board(Board* base_board)
 {
     board_size = base_board->get_board_size();
+    int max_positions = 2*board_size*(board_size-1) + 6*board_size + 1;
+    configuration.resize(max_positions);
+    
+    void* nullp = NULL;
+    pair<char, void*> temp = make_pair('n', nullp);
+    fill(configuration.begin(), configuration.end(), temp);
     
     for(int i=0; i < configuration.size(); i++)
     {
@@ -37,6 +42,13 @@ Board::Board(Board* base_board)
     	my_rings.push_back(temp_ring);
     }
 
+    for(auto it: base_board->opp_rings)
+    {
+    	pair<int, int> temp_pos = it->get_position();
+    	Ring* temp_ring = new Ring(temp_pos.first, temp_pos.second, it->get_polarity());
+    	opp_rings.push_back(temp_ring);
+    }
+
 }
 
 int Board::no_my_rings()
@@ -49,21 +61,21 @@ bool Board::out_of_bounds(pair<int,int> position)
     int radius = position.first;
     int offset = position.second;
 
-    cerr << "Entering out of bound for " << radius << " " << offset << endl; 
+    // cerr << "Entering out of bound for " << radius << " " << offset << endl; 
 
     if(radius == 0)
     {
-    	cerr << "Exiting out of bound for " << radius << " " << offset << endl;
+    	// cerr << "Exiting out of bound for " << radius << " " << offset << endl;
     	return false;
 	}
 
     if (radius>board_size || (radius == board_size && offset%board_size == 0))
     {
-    	cerr << "Board size == " << board_size;
-    	cerr << "Exiting out of bound for true " << radius << " " << offset << endl;
+    	// cerr << "Board size == " << board_size;
+    	// cerr << "Exiting out of bound for true " << radius << " " << offset << endl;
     	return true;
 	}
-	cerr << "Exiting out of bound for " << radius << " " << offset << endl;
+	// cerr << "Exiting out of bound for " << radius << " " << offset << endl;
     return false;
 }
 
@@ -97,13 +109,13 @@ int Board::score()
 			while(!out_of_bounds(current_pos))
 			{
 				// cerr << "CERR: At position: " << current_pos.first << " " << current_pos.second << endl;
-				cerr << "Value of elems_lastfive " << elems_lastfive << " " << ", value of rings_lastfive " << rings_lastfive << endl;
+				// cerr << "Value of elems_lastfive " << elems_lastfive << " " << ", value of rings_lastfive " << rings_lastfive << endl;
 				next_pos = get_next_position(current_pos, direction);
-				cerr << "At check 1" << endl;
+				// cerr << "At check 1" << endl;
 				current_index = get_board_index(current_pos); 
-				cerr << "At check 2" << endl;
+				// cerr << "At check 2" << endl;
 				current_elem = configuration[current_index];
-				cerr << "At check 3" << endl;
+				// cerr << "At check 3" << endl;
 
 				if(lastfive.size() == 5)
 				{
@@ -177,12 +189,17 @@ vector< pair<int, int> > Board::get_possible_positions(pair<int, int> current_po
 	int offset = current_position.second;
 	vector<pair<int,int>> positions;
 
+	// cerr<<"hello"<<endl;
 	current_position = get_next_position(current_position, direction);
+	// cerr<<"hello?"<<endl;
 	bool marker = false;
 	while (!out_of_bounds(current_position))
-	{
+	{	
+		// cerr<<"out of?"<<endl;
 		int index = get_board_index(current_position);
+		// cerr<<"out of!"<<endl;
 		pair<char,void*> configuration = get_configuration(index);
+		// cerr<<"get"<<endl;
 		if (configuration.first == 'n')
 		{
 			positions.push_back(current_position);
@@ -193,8 +210,9 @@ vector< pair<int, int> > Board::get_possible_positions(pair<int, int> current_po
 			marker = true;
 		else
 			break;
-
+		// cerr<<"hello"<<endl;
 		current_position = get_next_position(current_position, direction);
+		// cerr<<"hello?"<<endl;
 
 	}
 
@@ -213,6 +231,10 @@ void Board::add_ring(Ring* piece)
 	if(piece->get_polarity() == 1)
 	{
 		my_rings.push_back(piece);
+	}
+	else
+	{
+		opp_rings.push_back(piece);
 	}
 }
 
@@ -247,4 +269,8 @@ void Board::set_configuration(pair<char, void*> temp, int i)
 vector<Ring*> Board::get_my_rings()
 {
 	return my_rings;
+}
+vector<Ring*> Board::get_opp_rings()
+{
+	return opp_rings;
 }
