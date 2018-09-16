@@ -18,9 +18,9 @@ Solver::Solver(Solver* base_solver)
 // Add constructor to copy a board : Krunal(Done)
 // Given a position and a direction, return possible end positions: Aakash
 
-
 string Solver::move()
 {
+	string move_str;
 	if(current_board->no_my_rings() < 5)
 	{
 		int a = turns, b = 0;
@@ -33,16 +33,20 @@ string Solver::move()
 		current_board->score();
 		cerr << "CERR: Exiting score " << endl;
 		
-		string move_str = "P " + to_string(a) + " " + to_string(b) + " \n";
-		return move_str;
+		move_str = "P " + to_string(a) + " " + to_string(b) + " \n";
 	}
 	else
 	{
-		
+		pair<Ring*, pair<int,int>> move = Solver::alpha_beta(current_board, 0, 2);
+		pair<int,int> a = move.first->get_position();
+		pair<int,int> b = move.second;
+		move_str = "S " + to_string(a.first) + " " + to_string(a.second) + " M " + to_string(b.first) + " " + to_string(b.second)+" \n";
+
+		current_board = generate_board(current_board, move);
 	}
 
 	// Block opp move in 1 move: Aakash
-	return "P 10 10";
+	return move_str;
 }
 
 void Solver::make_opp_move(string move_str)
@@ -82,3 +86,74 @@ void Solver::make_opp_move(string move_str)
 		}
 	}
 }
+pair<Ring*, pair<int,int>> Solver::alpha_beta(Board* temp, int depth, int final_depth)
+{
+	vector<pair<Ring*, pair<int,int>>> neighbours = Solver::get_neighbours(temp);
+	int index = 0;
+	int res_score = depth%2 == 0 ? INT_MAX : INT_MIN;
+	for (int i=0; i<neighbours.size();i++)
+	{
+		Board* child = generate_board(temp, neighbours[i]);
+		if (depth != final_depth)
+		{
+			pair<Ring*, pair<int,int>> move = alpha_beta(child, depth+1, final_depth);
+			Board* new_board = generate_board(child, move);
+		}
+		int score = child->score();
+		if(depth%2 == 0 ? score > res_score : score < res_score)
+		{
+			res_score = score;
+			index = i;
+		}
+
+		delete child;
+	}
+
+	return neighbours[index];
+}
+
+vector<pair<Ring*, pair<int,int>>> Solver::get_neighbours(Board* my_board)
+{
+	vector<pair<Ring*, pair<int,int>>> neighbours;
+	vector<Ring*> my_rings = my_board->get_my_rings();
+
+	for (int i=0;i<my_rings.size();i++)
+	{
+		Ring* current_ring = my_rings[i];
+		pair<int,int> current_position = current_ring->get_position();
+		for(int direction=0; direction<6;direction++)
+		{
+			vector<pair<int,int>> possible_positions = my_board->get_possible_positions(current_position, direction);
+			for (int j=0;j<possible_positions.size();j++)
+			{
+				pair<Ring*, pair<int,int>> elem;
+				elem.first = current_ring;
+				elem.second = possible_positions[j];
+				neighbours.push_back(elem);
+			}
+		}
+	}
+
+	return neighbours;
+}
+
+Board* Solver::generate_board(Board* my_board, pair<Ring*, pair<int,int>> neighbour)
+{
+	Board* new_board = new Board(my_board);
+	vector<Ring*> rings = new_board->get_my_rings();
+	pair<int,int> my_pos = neighbour.first->get_position();
+
+	int index = 0;
+	for (int i=0;i<rings.size();i++)
+	{
+		pair<int,int> pos = rings[i]->get_position();
+		if(pos.first == my_pos.first && pos.second == my_pos.second)
+			index = i;
+	}
+
+	pair<int,int> final_position = rings[index]->get_position();
+	rings[index]->move(final_position.first, final_position.second);
+
+	return new_board;
+}
+

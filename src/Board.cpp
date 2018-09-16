@@ -49,21 +49,21 @@ bool Board::out_of_bounds(pair<int,int> position)
     int radius = position.first;
     int offset = position.second;
 
-    // cerr << "Entering out of bound for " << radius << " " << offset << endl; 
+    cerr << "Entering out of bound for " << radius << " " << offset << endl; 
 
     if(radius == 0)
     {
-    	// cerr << "Exiting out of bound for " << radius << " " << offset << endl;
+    	cerr << "Exiting out of bound for " << radius << " " << offset << endl;
     	return false;
 	}
 
     if (radius>board_size || (radius == board_size && offset%board_size == 0))
     {
     	cerr << "Board size == " << board_size;
-    	// cerr << "Exiting out of bound for true " << radius << " " << offset << endl;
+    	cerr << "Exiting out of bound for true " << radius << " " << offset << endl;
     	return true;
 	}
-	// cerr << "Exiting out of bound for " << radius << " " << offset << endl;
+	cerr << "Exiting out of bound for " << radius << " " << offset << endl;
     return false;
 }
 
@@ -102,6 +102,7 @@ int Board::score()
 				// cerr << "At check 1" << endl;
 				current_elem = configuration[current_index];
 				// cerr << "At check 2" << endl;
+
 
 				if(lastfive.size() == 5)
 				{
@@ -242,4 +243,8 @@ pair<char, void*> Board::get_configuration(int i)
 void Board::set_configuration(pair<char, void*> temp, int i)
 {
 	configuration[i] = temp;
+}
+vector<Ring*> Board::get_my_rings()
+{
+	return my_rings;
 }
