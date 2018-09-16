@@ -21,16 +21,18 @@ Board::Board(Board* base_board)
     void* nullp = NULL;
     pair<char, void*> temp = make_pair('n', nullp);
     
-    for(int i=0; i < configuration.size(); i++)
-    {
-    	pair<char, void*> temp = base_board->get_configuration(i);
-    	configuration[i] = temp;
-    }
+    // for(int i=0; i < configuration.size(); i++)
+    // {
+    // 	pair<char, void*> temp = base_board->get_configuration(i);
+    // 	configuration[i] = temp;
+    // }
 
     for(auto it: base_board->my_markers)
     {
     	pair<int, int> temp_pos = it->get_position();
     	Marker* temp_marker = new Marker(temp_pos.first, temp_pos.second, it->get_polarity());
+    	int index = get_board_index(temp_pos);
+    	configuration[index] = make_pair('m', temp_marker);
     	my_markers.push_back(temp_marker);
     }
 
@@ -38,6 +40,8 @@ Board::Board(Board* base_board)
     {
     	pair<int, int> temp_pos = it->get_position();
     	Ring* temp_ring = new Ring(temp_pos.first, temp_pos.second, it->get_polarity());
+    	int index = get_board_index(temp_pos);
+    	configuration[index] = make_pair('r', temp_ring);
     	my_rings.push_back(temp_ring);
     }
 
@@ -45,9 +49,19 @@ Board::Board(Board* base_board)
     {
     	pair<int, int> temp_pos = it->get_position();
     	Ring* temp_ring = new Ring(temp_pos.first, temp_pos.second, it->get_polarity());
+    	int index = get_board_index(temp_pos);
+    	configuration[index] = make_pair('r', temp_ring);
     	opp_rings.push_back(temp_ring);
     }
 
+    for(auto it: base_board->opp_markers)
+    {
+    	pair<int, int> temp_pos = it->get_position();
+    	Marker* temp_marker = new Marker(temp_pos.first, temp_pos.second, it->get_polarity());
+    	int index = get_board_index(temp_pos);
+    	configuration[index] = make_pair('m', temp_marker);
+    	opp_markers.push_back(temp_marker);
+    }
 }
 
 int Board::no_my_rings()
@@ -245,6 +259,10 @@ void Board::add_marker(Marker* piece)
 	{
 		my_markers.push_back(piece);
 	}
+	else
+	{
+		opp_markers.push_back(piece);
+	}
 }
 
 int Board::get_board_size()
@@ -298,6 +316,13 @@ void Board::print_board()
 	{
 		pair<int, int> pos = opp_rings[i]->get_position();
 		cerr << "Ring " << i << " at " << pos.first << " " << pos.second << endl;
+	}
+
+	cerr << "Opp markers" << endl;
+	for (int i = 0; i < opp_markers.size(); ++i)
+	{
+		pair<int, int> pos = opp_markers[i]->get_position();
+		cerr << "Marker " << i << " at " << pos.first << " " << pos.second << endl;
 	}
 
 	cerr << "Configuration " << configuration.size() << endl;

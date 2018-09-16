@@ -17,6 +17,7 @@ private:
     vector<Marker*> my_markers;
     vector<Ring*> my_rings;
     vector<Ring*> opp_rings;
+    vector<Marker*> opp_markers;
     vector< pair< char, void*> > configuration; 
     int board_size;
 
