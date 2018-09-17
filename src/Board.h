@@ -26,6 +26,7 @@ public:
     Board(int);
     Board(Board* base_board);
     int no_my_rings();
+    int no_opp_rings();
     void add_ring(Ring*);
     void add_marker(Marker*);
     

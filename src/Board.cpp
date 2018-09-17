@@ -71,6 +71,11 @@ int Board::no_my_rings()
 	return my_rings.size();
 }
 
+int Board::no_opp_rings()
+{
+	return opp_rings.size();
+}
+
 bool Board::out_of_bounds(pair<int,int> position)
 {
     int radius = position.first;
@@ -100,6 +105,9 @@ int Board::score()
 	pair<char, void*> popped_elem;
 	int elems_lastfive = 0;
 	int rings_lastfive = 0;
+
+	int my_completed_rings = 5 - no_my_rings();
+	int opp_completed_rings = 5 - no_opp_rings();
 	
 	pair<int, int> current_pos;
 	int current_index;
@@ -172,11 +180,21 @@ int Board::score()
 				score += elems_lastfive;
 				if(elems_lastfive == 5 && rings_lastfive <= 1)
 				{
+					if(my_completed_rings == 2)
+					{
+						score = INT_MAX;
+						return score;
+					}
 					score += 100000;
 				}
 				else if(elems_lastfive == -5 && rings_lastfive <= 1)
 				{
-					score -= 10000;
+					if(opp_completed_rings == 2)
+					{
+						score = INT_MIN;
+						return score;
+					}
+					score -= 1000;
 				}
 				
 				current_pos = get_next_position(current_pos, direction);;
