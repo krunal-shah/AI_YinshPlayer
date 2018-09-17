@@ -299,12 +299,12 @@ vector<int> Board::detect_success()
 				lastfive.push(current_index);
 
 				
-				if(reality == 1)
-				{
-					cerr << "Detect" << endl;
-					cerr << current_pos.first << " " << current_pos.second << " " << direction << " " << elems_lastfive << " " << rings_lastfive << endl;
-					cerr << current_elem.first << " " << current_index << endl;
-				}
+				// if(reality == 1)
+				// {
+				// 	cerr << "Detect" << endl;
+				// 	cerr << current_pos.first << " " << current_pos.second << " " << direction << " " << elems_lastfive << " " << rings_lastfive << endl;
+				// 	cerr << current_elem.first << " " << current_index << endl;
+				// }
 
 				if(elems_lastfive == 5 && rings_lastfive == 0)
 				{

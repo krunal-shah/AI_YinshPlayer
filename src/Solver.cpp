@@ -46,22 +46,7 @@ string Solver::move()
 	}
 	else
 	{
-		int counter = 0;
-		cerr << "Before our move" << endl;
-		current_board->print_board();
-		pair< int, vector<int> > move = Solver::alpha_beta(current_board, 0, 3, counter, INT_MIN, INT_MAX);
-		
-		pair<int,int> a = make_pair(move.second[0], move.second[1]);
-		pair<int,int> b = make_pair(move.second[2], move.second[3]);
-		int ring_pos = get_board_index(a);
-		Ring* ring = (Ring*)current_board->get_configuration(ring_pos).second;
-		
-		current_board->print_board();
-
-		current_board->move_ring(ring, b);
-		move_str = "S " + to_string(a.first) + " " + to_string(a.second) + " M " + to_string(b.first) + " " + to_string(b.second);
-
-		
+		move_str = "";
 		vector<int> to_remove_markers = current_board->detect_success();
 		cerr << "Successfully out of success " << to_remove_markers.size() << endl;
 		while(to_remove_markers.size() > 0)
@@ -86,6 +71,69 @@ string Solver::move()
 			cerr << "Move: " << move_str;
 
 			to_remove_markers = current_board->detect_success();
+		}
+
+
+		if(current_board->no_my_rings() <= 2)
+		{
+			cerr << "Move: " << move_str;
+			move_str = move_str + "\n";
+
+			cerr << "After our move " << move_str << endl;
+			current_board->print_board();
+
+			return move_str;
+		}
+
+		int counter = 0;
+		cerr << "Before our move" << endl;
+		current_board->print_board();
+		pair< int, vector<int> > move = Solver::alpha_beta(current_board, 0, 3, counter, INT_MIN, INT_MAX);
+		
+		pair<int,int> a = make_pair(move.second[0], move.second[1]);
+		pair<int,int> b = make_pair(move.second[2], move.second[3]);
+		int ring_pos = get_board_index(a);
+		Ring* ring = (Ring*)current_board->get_configuration(ring_pos).second;
+		
+		current_board->move_ring(ring, b);
+		move_str = move_str + " S " + to_string(a.first) + " " + to_string(a.second) + " M " + to_string(b.first) + " " + to_string(b.second);
+
+		
+		to_remove_markers = current_board->detect_success();
+		cerr << "Successfully out of success " << to_remove_markers.size() << endl;
+		while(to_remove_markers.size() > 0)
+		{
+			cerr << "Successfully in success" << endl;
+			move_str += " RS " + to_string(to_remove_markers[0]) + " " + to_string(to_remove_markers[1]) + " RE " + to_string(to_remove_markers[2]) + " " + to_string(to_remove_markers[3]);
+			cerr << "Move before remove_markers: " << move_str;
+			pair<int, int> one_end = make_pair(to_remove_markers[0], to_remove_markers[1]);
+			pair<int, int> second_end = make_pair(to_remove_markers[2], to_remove_markers[3]);
+			cerr << "going into remove_markers" << endl;
+			current_board->remove_markers(one_end, second_end, 1);
+			cerr << "coming out of remove_markers" << endl;
+
+			Ring* ring_to_remove = decide_remove_ring();
+			cerr << "going into remove_markers" << endl;
+			current_board->remove_ring(ring_to_remove);
+			cerr << "coming out of remove_markers" << endl;
+			pair<int, int> pos_ring_to_remove = ring_to_remove->get_position();
+
+			move_str += " X " + to_string(pos_ring_to_remove.first) + " " + to_string(pos_ring_to_remove.second);
+
+			cerr << "Move: " << move_str;
+
+			to_remove_markers = current_board->detect_success();
+
+			if(current_board->no_my_rings() <= 2)
+			{
+				cerr << "Move: " << move_str;
+				move_str = move_str + "\n";
+
+				cerr << "After our move " << move_str << endl;
+				current_board->print_board();
+
+				return move_str;
+			}
 		}
 		cerr << "Move: " << move_str;
 		move_str = move_str + "\n";
@@ -189,11 +237,11 @@ pair<int, vector<int> > Solver::alpha_beta(Board* temp, int depth, int final_dep
 
 	sort(neighbour_boards.rbegin(), neighbour_boards.rend());
 
-	cerr << "Sorted scores" << endl;
-	for (int i = 0; i < neighbour_boards.size(); ++i)
-	{
-		cerr << i << ". " << neighbour_boards[i].first.first << endl;
-	}
+	// cerr << "Sorted scores" << endl;
+	// for (int i = 0; i < neighbour_boards.size(); ++i)
+	// {
+	// 	cerr << i << ". " << neighbour_boards[i].first.first << endl;
+	// }
 
 	// cerr << "Exiting get_neighbours" << endl;
 	int index = 0;
