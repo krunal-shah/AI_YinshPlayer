@@ -177,6 +177,18 @@ pair<int, vector<int> > Solver::alpha_beta(Board* temp, int depth, int final_dep
 	}
 	// cerr << "Entering get_neighbours" << endl;
 	vector<pair<pair<int,int>, pair<int,int>>> neighbours = Solver::get_neighbours(temp, (1+depth)%2);
+
+	vector<pair<int, Board*>> neighbour_boards(neighbours.size());
+
+	for (int i = 0; i < neighbours.size(); ++i)
+	{
+		Board* child = generate_board(temp, neighbours[i], (1+depth)%2);
+		int child_score = child->score();
+		neighbour_boards[i] = make_pair(child_score, child);
+	}
+
+	sort(neighbour_boards.begin(), neighbour_boards.end());
+
 	// cerr << "Exiting get_neighbours" << endl;
 	int index = 0;
 	int res_score = depth%2 == 0 ? INT_MIN : INT_MAX;
@@ -184,7 +196,7 @@ pair<int, vector<int> > Solver::alpha_beta(Board* temp, int depth, int final_dep
 	for (int i=0; i<neighbours.size();i++)
 	{
 		// cerr<<i<<endl;
-		Board* child = generate_board(temp, neighbours[i], (1+depth)%2);
+		Board* child = neighbour_boards[i].second;
 		counter++;
 		// cerr << "Board no " << counter << endl;; 
 		
