@@ -172,7 +172,7 @@ int Board::score()
 				score += elems_lastfive;
 				if(elems_lastfive == 5 && rings_lastfive <= 1)
 				{
-					score += 10000;
+					score += 100000;
 				}
 				else if(elems_lastfive == -5 && rings_lastfive <= 1)
 				{
@@ -523,7 +523,7 @@ void Board::change_marker(Marker* marker)
 {
 	int polarity = marker->get_polarity();
 
-	if(polarity == 1)
+	if(polarity == 0)
 	{
 		for (int i=0;i<my_markers.size();i++)
 		{

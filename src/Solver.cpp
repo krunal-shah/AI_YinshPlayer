@@ -49,7 +49,7 @@ string Solver::move()
 		int counter = 0;
 		cerr << "Before our move" << endl;
 		current_board->print_board();
-		pair< int, vector<int> > move = Solver::alpha_beta(current_board, 0, 4, counter);
+		pair< int, vector<int> > move = Solver::alpha_beta(current_board, 0, 3, counter, INT_MIN, INT_MAX);
 		
 		pair<int,int> a = make_pair(move.second[0], move.second[1]);
 		pair<int,int> b = make_pair(move.second[2], move.second[3]);
@@ -163,7 +163,7 @@ void Solver::make_opp_move(string move_str)
 	// current_board->print_board();
 }
 
-pair<int, vector<int> > Solver::alpha_beta(Board* temp, int depth, int final_depth, int &counter)
+pair<int, vector<int> > Solver::alpha_beta(Board* temp, int depth, int final_depth, int &counter, int alpha, int beta)
 {
 	// cerr<<"yo"<<endl;
 	if(depth == final_depth)
@@ -188,12 +188,12 @@ pair<int, vector<int> > Solver::alpha_beta(Board* temp, int depth, int final_dep
 		counter++;
 		// cerr << "Board no " << counter << endl;; 
 		
-		pair<int, vector<int> > move = alpha_beta(child, depth+1, final_depth, counter);
-
+		pair<int, vector<int> > move = alpha_beta(child, depth+1, final_depth, counter, alpha, beta);
 		int score = move.first;
 		
 		if(depth%2 == 0)
 		{
+			alpha = max(alpha, score);
 			if(score > res_score)
 			{
 				res_score = score;
@@ -202,6 +202,7 @@ pair<int, vector<int> > Solver::alpha_beta(Board* temp, int depth, int final_dep
 		}
 		else
 		{
+			beta = min(beta, score);
 			if(score < res_score)
 			{
 				res_score = score;
@@ -210,6 +211,9 @@ pair<int, vector<int> > Solver::alpha_beta(Board* temp, int depth, int final_dep
 		}
 
 		delete child;
+
+		if(alpha >= beta)
+			break;
 	}
 	// cerr<<"here?"<<endl;
 
