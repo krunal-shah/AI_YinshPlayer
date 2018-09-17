@@ -510,15 +510,15 @@ void Board::move_ring(Ring* ring, int a, int b)
 	int direction = get_direction(ring_pos, final_pos);
 	pair<int,int> current_position = get_next_position(ring_pos, direction);
 
-	if(reality == 1)
-		cerr << "Direction = " << direction << " " << ring_pos.first << " " << ring_pos.second << " " << final_pos.first << " " << final_pos.second << endl;
+	// if(reality == 1)
+	// 	cerr << "Direction = " << direction << " " << ring_pos.first << " " << ring_pos.second << " " << final_pos.first << " " << final_pos.second << endl;
 	while(!out_of_bounds(current_position) && !(current_position == final_pos))
 	{
 		int ind = get_board_index(current_position);
 		if( configuration[ind].first == 'm')
 		{
-			if(reality == 1)
-				cerr << "Trying to flip " << current_position.first << "   " << current_position.second << " " << direction << endl;
+			// if(reality == 1)
+				// cerr << "Trying to flip " << current_position.first << "   " << current_position.second << " " << direction << endl;
 			Marker* mark = (Marker*)configuration[ind].second;
 			mark->flip_polarity();
 			change_marker(mark);
