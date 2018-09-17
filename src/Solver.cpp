@@ -178,22 +178,28 @@ pair<int, vector<int> > Solver::alpha_beta(Board* temp, int depth, int final_dep
 	// cerr << "Entering get_neighbours" << endl;
 	vector<pair<pair<int,int>, pair<int,int>>> neighbours = Solver::get_neighbours(temp, (1+depth)%2);
 
-	vector<pair<int, Board*>> neighbour_boards(neighbours.size());
+	vector<pair<pair<int, int>, Board*>> neighbour_boards(neighbours.size());
 
 	for (int i = 0; i < neighbours.size(); ++i)
 	{
 		Board* child = generate_board(temp, neighbours[i], (1+depth)%2);
 		int child_score = child->score();
-		neighbour_boards[i] = make_pair(child_score, child);
+		neighbour_boards[i] = make_pair(make_pair(child_score, i), child);
 	}
 
-	sort(neighbour_boards.begin(), neighbour_boards.end());
+	sort(neighbour_boards.rbegin(), neighbour_boards.rend());
+
+	cerr << "Sorted scores" << endl;
+	for (int i = 0; i < neighbour_boards.size(); ++i)
+	{
+		cerr << i << ". " << neighbour_boards[i].first.first << endl;
+	}
 
 	// cerr << "Exiting get_neighbours" << endl;
 	int index = 0;
 	int res_score = depth%2 == 0 ? INT_MIN : INT_MAX;
 	// cerr<<"here"<<endl;
-	for (int i=0; i<neighbours.size();i++)
+	for (int i=0; i<neighbour_boards.size();i++)
 	{
 		// cerr<<i<<endl;
 		Board* child = neighbour_boards[i].second;
@@ -233,10 +239,10 @@ pair<int, vector<int> > Solver::alpha_beta(Board* temp, int depth, int final_dep
 	// cerr<<"here?"<<endl;
 
 	vector<int> ret_vec(4);
-	ret_vec[0] = neighbours[index].first.first;
-	ret_vec[1] = neighbours[index].first.second;
-	ret_vec[2] = neighbours[index].second.first;
-	ret_vec[3] = neighbours[index].second.second;
+	ret_vec[0] = neighbours[neighbour_boards[index].first.second].first.first;
+	ret_vec[1] = neighbours[neighbour_boards[index].first.second].first.second;
+	ret_vec[2] = neighbours[neighbour_boards[index].first.second].second.first;
+	ret_vec[3] = neighbours[neighbour_boards[index].first.second].second.second;
 	pair< int, vector<int> > to_return;
 	to_return.first = res_score;
 	to_return.second = ret_vec;
