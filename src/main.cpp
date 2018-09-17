@@ -53,9 +53,6 @@ int main(int argc, char** argv)
 			cout << move_my;
 			turn = 2;
 
-			if(moves ==  10)
-				return 0;
-
 			string move_opp = "";
 			while(move_opp == "")
 			{

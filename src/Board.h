@@ -20,6 +20,7 @@ private:
     vector<Marker*> opp_markers;
     vector< pair< char, void*> > configuration; 
     int board_size;
+    int reality;
 
 public:
     Board(int);
@@ -40,7 +41,7 @@ public:
     vector<pair <int, int> > get_possible_positions(pair<int, int> current_position, int direction);
 
     int score();
-    vector<vector<int>> detect_success();
+    vector<int> detect_success();
 
     void print_board();
     void move_ring(Ring* ring, int a, int b);
@@ -49,6 +50,9 @@ public:
     void remove_markers(Marker* first_marker, Marker* last_marker);
     void remove_ring(Ring* ring);
     void remove_markers(pair<int,int> a, pair<int,int> b, int polarity);
+    int get_direction(pair<int,int> initial_position, pair<int,int> final_position);
+
+    void change_marker(Marker* marker);
 };
 
 #endif  /* BOARD_H */

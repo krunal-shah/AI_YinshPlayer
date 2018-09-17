@@ -10,6 +10,7 @@ Board::Board(int bsize)
     void* nullp = NULL;
     pair<char, void*> temp = make_pair('n', nullp);
     fill(configuration.begin(), configuration.end(), temp);
+    reality = 1;
 }
 
 Board::Board(Board* base_board)
@@ -17,6 +18,7 @@ Board::Board(Board* base_board)
     board_size = base_board->get_board_size();
     int max_positions = 3*board_size*(board_size-1) + 6*board_size + 1;
     configuration.resize(max_positions);
+    reality = 0;
     
     void* nullp = NULL;
     pair<char, void*> temp = make_pair('n', nullp);
@@ -170,11 +172,11 @@ int Board::score()
 				score += elems_lastfive;
 				if(elems_lastfive == 5 && rings_lastfive <= 1)
 				{
-					score += 100;
+					score += 10000;
 				}
 				else if(elems_lastfive == -5 && rings_lastfive <= 1)
 				{
-					score -= 100;
+					score -= 10000;
 				}
 				
 				current_pos = get_next_position(current_pos, direction);;
@@ -189,13 +191,13 @@ int Board::score()
 	return score;
 }
 
-vector<vector<int>> Board::detect_success()
+vector<int> Board::detect_success()
 {
 	vector<vector<int>> ans;
 	int upper = 4*board_size-1;
 	int lower = 2*board_size+1;
+	int corner = 3*(board_size-1);
 
-	queue<int> lastfive;
 	pair<char, void*> current_elem;
 	pair<char, void*> popped_elem;
 	int elems_lastfive = 0;
@@ -205,12 +207,21 @@ vector<vector<int>> Board::detect_success()
 	int current_index;
 	
 	
-	for (int direction = 0; direction < 3; ++direction)
+	for (int direction = 0; direction < 3; direction++)
 	{
 		// cerr << "CERR: Direction " << direction << endl;
 		for (int offset = lower; offset <= upper; offset++)
 		{
+			elems_lastfive = 0;
+			rings_lastfive = 0;
+			queue<int> lastfive;
+			
 			current_pos = make_pair(board_size, offset);
+
+			if(out_of_bounds(current_pos))
+			{
+				current_pos = make_pair(board_size-1, corner);
+			}
 
 			while(!out_of_bounds(current_pos))
 			{
@@ -269,19 +280,24 @@ vector<vector<int>> Board::detect_success()
 
 				lastfive.push(current_index);
 
-				cerr << "Detect" << endl;
-				cerr << current_pos.first << " " << current_pos.second << " " << direction << " " << elems_lastfive << " " << rings_lastfive << endl;
+				
+				if(reality == 1)
+				{
+					cerr << "Detect" << endl;
+					cerr << current_pos.first << " " << current_pos.second << " " << direction << " " << elems_lastfive << " " << rings_lastfive << endl;
+					cerr << current_elem.first << " " << current_index << endl;
+				}
 
 				if(elems_lastfive == 5 && rings_lastfive == 0)
 				{
 					vector<int> temp_ans(4);
 					Marker* cur_mark = (Marker*)(current_elem.second);
-					Marker* sec_mark = (Marker*)(get_configuration(lastfive.back()).second);
+					Marker* sec_mark = (Marker*)(get_configuration(lastfive.front()).second);
 					temp_ans[0] = cur_mark->get_position().first;
 					temp_ans[1] = cur_mark->get_position().second;
 					temp_ans[2] = sec_mark->get_position().first;
 					temp_ans[3] = sec_mark->get_position().second;
-					ans.push_back(temp_ans);
+					return temp_ans;
 				}
 				
 				current_pos = get_next_position(current_pos, direction);;
@@ -291,9 +307,11 @@ vector<vector<int>> Board::detect_success()
 
 		upper += board_size; // upper could be 6*board_size
 		lower += board_size;
+		corner += board_size-1;
 	} 
 
-	return ans;
+	vector<int> temp_ans(0);
+	return temp_ans;
 }
 
 
@@ -312,7 +330,7 @@ vector< pair<int, int> > Board::get_possible_positions(pair<int, int> current_po
 	// cerr<<"position "<<current_position.first<<" "<<current_position.second<<endl;
 	while (!out_of_bounds(current_position))
 	{	
-		cerr << "Currently at " << current_position.first << " " << current_position.second << endl;
+		// cerr << "Currently at " << current_position.first << " " << current_position.second << endl;
 		// cerr<<"out of?"<<endl;
 		// cerr<<count++<<endl;
 		int index = get_board_index(current_position);
@@ -410,35 +428,35 @@ void Board::print_board()
 	// vector< pair< char, void*> > configuration; 
 	// int board_size;
 
-	// cerr << "My markers" << endl;
+	cerr << "My markers" << endl;
 	for (int i = 0; i < my_markers.size(); ++i)
 	{
 		pair<int, int> pos = my_markers[i]->get_position();
-		// cerr << "Marker " << i << " at " << pos.first << " " << pos.second << endl;
+		cerr << "Marker " << i << " at " << pos.first << " " << pos.second << endl;
 	}
 
-	// cerr << "My rings" << endl;
+	cerr << "My rings" << endl;
 	for (int i = 0; i < my_rings.size(); ++i)
 	{
 		pair<int, int> pos = my_rings[i]->get_position();
-		// cerr << "Ring " << i << " at " << pos.first << " " << pos.second << endl;
+		cerr << "Ring " << i << " at " << pos.first << " " << pos.second << endl;
 	}
 
-	// cerr << "Opp rings" << endl;
+	cerr << "Opp rings" << endl;
 	for (int i = 0; i < opp_rings.size(); ++i)
 	{
 		pair<int, int> pos = opp_rings[i]->get_position();
-		// cerr << "Ring " << i << " at " << pos.first << " " << pos.second << endl;
+		cerr << "Ring " << i << " at " << pos.first << " " << pos.second << endl;
 	}
 
-	// cerr << "Opp markers" << endl;
+	cerr << "Opp markers" << endl;
 	for (int i = 0; i < opp_markers.size(); ++i)
 	{
 		pair<int, int> pos = opp_markers[i]->get_position();
-		// cerr << "Marker " << i << " at " << pos.first << " " << pos.second << endl;
+		cerr << "Marker " << i << " at " << pos.first << " " << pos.second << endl;
 	}
 
-	// cerr << "Configuration " << configuration.size() << endl;
+	cerr << "Configuration " << configuration.size() << endl;
 	for (int i = 0; i < configuration.size(); ++i)
 	{
 		pair< char, void*> pos = configuration[i];
@@ -447,21 +465,22 @@ void Board::print_board()
 		{
 			// cerr << "here" << endl;
 			Ring* ring = (Ring*)pos.second;
-			// cerr << "ring at " << ring->get_position().first << " " << ring->get_position().second << " at index " << i << " polarity = " << ring->get_polarity() << endl;
+			cerr << "ring at " << ring->get_position().first << " " << ring->get_position().second << " at index " << i << " polarity = " << ring->get_polarity() << endl;
 		}
 		else if(pos.first == 'm')
 		{
 			// cerr << "here" << endl;
 			Marker* marker = (Marker*)pos.second;
-			// cerr << "marker at " << marker->get_position().first << " " << marker->get_position().second << " at index " << i << " polarity = " << marker->get_polarity() << endl;
+			cerr << "marker at " << marker->get_position().first << " " << marker->get_position().second << " at index " << i << " polarity = " << marker->get_polarity() << endl;
 		}
 	}
 }
 
 void Board::move_ring(Ring* ring, int a, int b)
 {
+	// print_board();
 	pair<int, int> ring_pos = ring->get_position();
-	cerr << "polarity of ring trying to move " << ring->get_polarity() << endl;
+	// cerr << "polarity of ring trying to move " << ring->get_polarity() << endl;
 	Marker* marker = new Marker(ring_pos.first, ring_pos.second, ring->get_polarity());
 
 	int index = get_board_index(a,b);
@@ -473,13 +492,18 @@ void Board::move_ring(Ring* ring, int a, int b)
 	int direction = get_direction(ring_pos, final_pos);
 	pair<int,int> current_position = get_next_position(ring_pos, direction);
 
+	if(reality == 1)
+		cerr << "Direction = " << direction << " " << ring_pos.first << " " << ring_pos.second << " " << final_pos.first << " " << final_pos.second << endl;
 	while(!out_of_bounds(current_position) && !(current_position == final_pos))
 	{
 		int ind = get_board_index(current_position);
 		if( configuration[ind].first == 'm')
 		{
+			if(reality == 1)
+				cerr << "Trying to flip " << current_position.first << "   " << current_position.second << " " << direction << endl;
 			Marker* mark = (Marker*)configuration[ind].second;
 			mark->flip_polarity();
+			change_marker(mark);
 		}
 		current_position = get_next_position(current_position, direction);
 	}
@@ -495,6 +519,37 @@ void Board::move_ring(Ring* ring, pair<int, int> pos)
 	move_ring(ring, pos.first, pos.second);
 }
 
+void Board::change_marker(Marker* marker)
+{
+	int polarity = marker->get_polarity();
+
+	if(polarity == 1)
+	{
+		for (int i=0;i<my_markers.size();i++)
+		{
+			if(my_markers[i] == marker)
+			{
+				my_markers.erase(my_markers.begin()+i);
+				opp_markers.push_back(marker);
+				return;
+			}
+		}
+	}
+	else
+	{
+		for (int i=0;i<opp_markers.size();i++)
+		{
+			if(opp_markers[i] == marker)
+			{
+				opp_markers.erase(opp_markers.begin()+i);
+				my_markers.push_back(marker);
+				return;
+			}
+		}
+	}
+	
+}
+
 void Board::remove_markers(Marker* first_marker, Marker* last_marker)
 {
 	int polarity = first_marker->get_polarity();
@@ -504,31 +559,34 @@ void Board::remove_markers(Marker* first_marker, Marker* last_marker)
 
 	pair<int,int> current_position = current_marker->get_position();
 
+	vector<Marker*>* markers;
+	if (polarity == 1)
+		markers = &my_markers;
+	else
+		markers = &opp_markers;
+
 	for (int i=0;i<5;i++)
 	{
-		int index = get_board_index(current_marker->get_position());
+		int index = get_board_index(current_position);
 		set_configuration('n', NULL, index);
 
-		vector<Marker*>* markers;
-		if (polarity == 1)
-			markers = &my_markers;
-		else
-			markers = &opp_markers;
 
 		for (int i=0;i<markers->size();i++)
 		{
 			pair<int,int> pos = markers->at(i)->get_position();
-			if(pos.first == current_position.first && pos.second == current_position.second)
+			if(pos == current_position)
 				markers->erase(markers->begin()+i);
 		}
-		current_position = get_next_position(current_marker->get_position(), direction);
+		current_position = get_next_position(current_position, direction);
 	}
 }
 
 void Board::remove_markers(pair<int,int> a, pair<int,int> b, int polarity)
 {
-	Marker* first_marker = new Marker(a.first,a.second,polarity);
-	Marker* last_marker = new Marker(b.first,b.second,polarity);
+	int index_first = get_board_index(a);
+	Marker* first_marker = (Marker*)(get_configuration(index_first).second);
+	int index_second = get_board_index(b);
+	Marker* last_marker = (Marker*)(get_configuration(index_second).second);
 	
 	remove_markers(first_marker, last_marker);
 }
@@ -557,4 +615,25 @@ void Board::remove_ring(Ring* ring)
 			rings->erase(rings->begin()+i);
 	}
 
+}
+int Board::get_direction(pair<int,int> initial_position, pair<int,int> final_position)
+{
+	int direction = -1;
+	pair<int,int> current_position = initial_position;
+	for (int i=0;i<6;i++)
+	{
+		current_position = initial_position;
+		while(!out_of_bounds(current_position))
+		{
+			if(current_position == final_position)
+			{
+				direction = i;
+				break;
+			}
+			current_position = get_next_position(current_position, i);
+		}
+		if(direction != -1)
+			break;
+	}
+	return direction;
 }

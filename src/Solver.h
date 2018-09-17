@@ -13,6 +13,7 @@ private:
 
     Board* current_board;
     int turns;
+    bool start;
 
 public:
     Solver(int, int, int);
