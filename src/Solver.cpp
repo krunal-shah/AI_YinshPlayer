@@ -49,7 +49,7 @@ string Solver::move()
 		int counter = 0;
 		cerr << "Before our move" << endl;
 		current_board->print_board();
-		pair< int, vector<int> > move = Solver::alpha_beta(current_board, 0, 2, counter);
+		pair< int, vector<int> > move = Solver::alpha_beta(current_board, 0, 4, counter);
 		
 		pair<int,int> a = make_pair(move.second[0], move.second[1]);
 		pair<int,int> b = make_pair(move.second[2], move.second[3]);
