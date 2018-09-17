@@ -213,7 +213,10 @@ pair<int, vector<int> > Solver::alpha_beta(Board* temp, int depth, int final_dep
 		delete child;
 
 		if(alpha >= beta)
+		{
+			// cerr << "yaay pruned" << endl;
 			break;
+		}
 	}
 	// cerr<<"here?"<<endl;
 
