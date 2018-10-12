@@ -23,9 +23,10 @@ public:
     string move();
     pair<int, vector<int> > alpha_beta(Board* temp, int depth, int final_depth, int &counter, int alpha, int beta);
     vector<pair<pair<int,int>, pair<int,int>>> get_neighbours(Board* my_board, int polarity);
-    Board* generate_board(Board* my_board, pair<pair<int,int>, pair<int,int>> neighbour, int polarity);
+    pair<Board*,int> generate_board(Board* my_board, pair<pair<int,int>, pair<int,int>> neighbour, int polarity);
 
     Ring* decide_remove_ring(Board* board, int polarity);
+    vector<vector<int>> get_combinations (int max_rings, int num_rings);
 };
 
 #endif  /* SOLVER_H */

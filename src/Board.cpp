@@ -182,7 +182,7 @@ int Board::score()
 
 				lastfive.push(current_index);
 
-				score += elems_lastfive;
+				score += elems_lastfive*abs(elems_lastfive);
 				if(elems_lastfive == 5 && rings_lastfive <= 1)
 				{
 					if(my_completed_rings == 2)
