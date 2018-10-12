@@ -4,6 +4,7 @@
 #include<iostream>
 #include<fstream>
 #include<vector>
+#include <cstdlib>
 #include "Board.h"
 #include "Util.h"
 using namespace std;
@@ -24,7 +25,7 @@ public:
     vector<pair<pair<int,int>, pair<int,int>>> get_neighbours(Board* my_board, int polarity);
     Board* generate_board(Board* my_board, pair<pair<int,int>, pair<int,int>> neighbour, int polarity);
 
-    Ring* decide_remove_ring(Board* board);
+    Ring* decide_remove_ring(Board* board, int polarity);
 };
 
 #endif  /* SOLVER_H */

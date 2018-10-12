@@ -108,6 +108,11 @@ int Board::score()
 
 	int my_completed_rings = 5 - no_my_rings();
 	int opp_completed_rings = 5 - no_opp_rings();
+
+	if(my_completed_rings >= 3)
+		return INT_MAX;
+	if(opp_completed_rings >= 3)
+		return INT_MIN;
 	
 	pair<int, int> current_pos;
 	int current_index;

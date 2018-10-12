@@ -6,6 +6,7 @@ Solver::Solver(int player_id, int board_size, int time_limit)
     current_board = new Board(board_size);
     turns = 1;
     start = true;
+    srand(1234);
 }
 
 Solver::Solver(Solver* base_solver)
@@ -24,14 +25,19 @@ string Solver::move()
 	string move_str;
 	if(current_board->no_my_rings() < 5 && start)
 	{
-		int a = 4, b = turns;
+		int a = 0, b = 0;
+		a = rand()%5;
+		if(a != 0)
+			b = rand()%(a*6);
 		turns++;
 		pair<int,int> temp_pos = make_pair(a,b);
 		int temp_index = get_board_index(temp_pos);
 		while(current_board->get_configuration(temp_index).first != 'n')
 		{
-			a = 4;
-			b = ++turns;
+			b = 0;
+			a = rand()%5;
+			if(a!=0)
+				b = rand()%(a*6);
 			pair<int,int> temp_pos = make_pair(a,b);
 			temp_index = get_board_index(temp_pos);
 		}
@@ -60,7 +66,7 @@ string Solver::move()
 			current_board->remove_markers(one_end, second_end, 1);
 			// cerr << "coming out of remove_markers" << endl;
 
-			Ring* ring_to_remove = decide_remove_ring(current_board);
+			Ring* ring_to_remove = decide_remove_ring(current_board,1);
 			// cerr << "going into remove_markers" << endl;
 			current_board->remove_ring(ring_to_remove);
 			// cerr << "coming out of remove_markers" << endl;
@@ -112,7 +118,7 @@ string Solver::move()
 			current_board->remove_markers(one_end, second_end, 1);
 			// cerr << "coming out of remove_markers" << endl;
 
-			Ring* ring_to_remove = decide_remove_ring(current_board);
+			Ring* ring_to_remove = decide_remove_ring(current_board,1);
 			// cerr << "going into remove_markers" << endl;
 			current_board->remove_ring(ring_to_remove);
 			// cerr << "coming out of remove_markers" << endl;
@@ -142,7 +148,7 @@ string Solver::move()
 		// current_board->print_board();
 
 		// cerr << "Our move is " << move_str << endl;
- 	// 	for (int i=0;i<rings.size();i++)
+ 		// for (int i=0;i<rings.size();i++)
 		// {
 		// 	pair<int,int> pos = rings[i]->get_position();
 		// 	cerr<<pos.first<<" "<<pos.second<<endl;
@@ -369,11 +375,11 @@ Board* Solver::generate_board(Board* my_board, pair<pair<int,int>, pair<int,int>
 		pair<int, int> one_end = make_pair(to_remove_markers[0], to_remove_markers[1]);
 		pair<int, int> second_end = make_pair(to_remove_markers[2], to_remove_markers[3]);
 		// cerr << "going into remove_markers" << endl;
-		new_board->remove_markers(one_end, second_end, 1);
+		new_board->remove_markers(one_end, second_end, polarity);
 		// cerr << "Removed markers\n";
 		// cerr << "coming out of remove_markers" << endl;
 
-		Ring* ring_to_remove = decide_remove_ring(new_board);
+		Ring* ring_to_remove = decide_remove_ring(new_board, polarity);
 		// cerr << "Decided ring\n";
 		// cerr << "going into remove_markers" << endl;
 		new_board->remove_ring(ring_to_remove);
@@ -388,8 +394,12 @@ Board* Solver::generate_board(Board* my_board, pair<pair<int,int>, pair<int,int>
 	return new_board;
 }
 
-Ring* Solver::decide_remove_ring(Board* board)
+Ring* Solver::decide_remove_ring(Board* board, int polarity)
 {
+	if(polarity == 0)
+	{
+		return (*board->get_opp_rings())[0];	
+	}
 	return (*board->get_my_rings())[0];
 }
 
