@@ -42,7 +42,7 @@ public:
     vector<pair <int, int> > get_possible_positions(pair<int, int> current_position, int direction);
 
     int score();
-    vector<int> detect_success();
+    vector<int> detect_success(int polarity);
 
     void print_board();
     void move_ring(Ring* ring, int a, int b);

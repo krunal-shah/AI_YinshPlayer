@@ -24,7 +24,7 @@ public:
     vector<pair<pair<int,int>, pair<int,int>>> get_neighbours(Board* my_board, int polarity);
     Board* generate_board(Board* my_board, pair<pair<int,int>, pair<int,int>> neighbour, int polarity);
 
-    Ring* decide_remove_ring();
+    Ring* decide_remove_ring(Board* board);
 };
 
 #endif  /* SOLVER_H */

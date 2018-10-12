@@ -185,7 +185,7 @@ int Board::score()
 						score = INT_MAX;
 						return score;
 					}
-					score += 100000;
+					score += 1000;
 				}
 				else if(elems_lastfive == -5 && rings_lastfive <= 1)
 				{
@@ -206,11 +206,15 @@ int Board::score()
 		lower += board_size;
 	} 
 
+	score += my_completed_rings*1000000;
+	score -= opp_completed_rings*1000000;
+
 	return score;
 }
 
-vector<int> Board::detect_success()
+vector<int> Board::detect_success(int polarity)
 {
+	polarity = polarity == 1?1:-1;
 	vector<vector<int>> ans;
 	int upper = 4*board_size-1;
 	int lower = 2*board_size+1;
@@ -275,6 +279,7 @@ vector<int> Board::detect_success()
 							elems_lastfive ++;
 					}
 				}
+				// cerr << "At check 4" << endl;
 
 
 				if(current_elem.first == 'r')
@@ -295,6 +300,7 @@ vector<int> Board::detect_success()
 					else
 						elems_lastfive --;
 				}
+				// cerr << "At check 5" << endl;
 
 				lastfive.push(current_index);
 
@@ -306,7 +312,7 @@ vector<int> Board::detect_success()
 				// 	cerr << current_elem.first << " " << current_index << endl;
 				// }
 
-				if(elems_lastfive == 5 && rings_lastfive == 0)
+				if(elems_lastfive == 5*polarity && rings_lastfive == 0)
 				{
 					vector<int> temp_ans(4);
 					Marker* cur_mark = (Marker*)(current_elem.second);
@@ -317,8 +323,9 @@ vector<int> Board::detect_success()
 					temp_ans[3] = sec_mark->get_position().second;
 					return temp_ans;
 				}
+				// cerr << "At check 6" << endl;
 				
-				current_pos = get_next_position(current_pos, direction);;
+				current_pos = get_next_position(current_pos, direction);
 			}
 			// cerr << "Exited out of bounds for " << current_pos.first << " " << current_pos.second << endl;
 		}

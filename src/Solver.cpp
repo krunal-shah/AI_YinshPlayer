@@ -47,7 +47,7 @@ string Solver::move()
 	else
 	{
 		move_str = "";
-		vector<int> to_remove_markers = current_board->detect_success();
+		vector<int> to_remove_markers = current_board->detect_success(1);
 		// cerr << "Successfully out of success " << to_remove_markers.size() << endl;
 		while(to_remove_markers.size() > 0)
 		{
@@ -60,7 +60,7 @@ string Solver::move()
 			current_board->remove_markers(one_end, second_end, 1);
 			// cerr << "coming out of remove_markers" << endl;
 
-			Ring* ring_to_remove = decide_remove_ring();
+			Ring* ring_to_remove = decide_remove_ring(current_board);
 			// cerr << "going into remove_markers" << endl;
 			current_board->remove_ring(ring_to_remove);
 			// cerr << "coming out of remove_markers" << endl;
@@ -70,7 +70,7 @@ string Solver::move()
 
 			// cerr << "Move: " << move_str;
 
-			to_remove_markers = current_board->detect_success();
+			to_remove_markers = current_board->detect_success(1);
 		}
 
 
@@ -99,7 +99,7 @@ string Solver::move()
 		move_str = move_str + " S " + to_string(a.first) + " " + to_string(a.second) + " M " + to_string(b.first) + " " + to_string(b.second);
 
 		
-		to_remove_markers = current_board->detect_success();
+		to_remove_markers = current_board->detect_success(1);
 		// cerr << "Successfully out of success " << to_remove_markers.size() << endl;
 		while(to_remove_markers.size() > 0)
 		{
@@ -112,7 +112,7 @@ string Solver::move()
 			current_board->remove_markers(one_end, second_end, 1);
 			// cerr << "coming out of remove_markers" << endl;
 
-			Ring* ring_to_remove = decide_remove_ring();
+			Ring* ring_to_remove = decide_remove_ring(current_board);
 			// cerr << "going into remove_markers" << endl;
 			current_board->remove_ring(ring_to_remove);
 			// cerr << "coming out of remove_markers" << endl;
@@ -122,7 +122,7 @@ string Solver::move()
 
 			// cerr << "Move: " << move_str;
 
-			to_remove_markers = current_board->detect_success();
+			to_remove_markers = current_board->detect_success(1);
 
 			if(current_board->no_my_rings() <= 2)
 			{
@@ -139,7 +139,7 @@ string Solver::move()
 		move_str = move_str + "\n";
 
 		// cerr << "After our move " << move_str << endl;
-		current_board->print_board();
+		// current_board->print_board();
 
 		// cerr << "Our move is " << move_str << endl;
  	// 	for (int i=0;i<rings.size();i++)
@@ -358,12 +358,38 @@ Board* Solver::generate_board(Board* my_board, pair<pair<int,int>, pair<int,int>
 
 	pair<int,int> final_position = neighbour.second;
 	new_board->move_ring(ring, final_position.first, final_position.second);
+
+	// cerr << "Trying to generate board\n";
+	vector<int> to_remove_markers = new_board->detect_success(polarity);
+	// cerr << "Successfully out of success " << to_remove_markers.size() << endl;
+	while(to_remove_markers.size() > 0)
+	{
+		// cerr << "Removing markers\n";
+		// cerr << "Move before remove_markers: " << move_str;
+		pair<int, int> one_end = make_pair(to_remove_markers[0], to_remove_markers[1]);
+		pair<int, int> second_end = make_pair(to_remove_markers[2], to_remove_markers[3]);
+		// cerr << "going into remove_markers" << endl;
+		new_board->remove_markers(one_end, second_end, 1);
+		// cerr << "Removed markers\n";
+		// cerr << "coming out of remove_markers" << endl;
+
+		Ring* ring_to_remove = decide_remove_ring(new_board);
+		// cerr << "Decided ring\n";
+		// cerr << "going into remove_markers" << endl;
+		new_board->remove_ring(ring_to_remove);
+		// cerr << "Removed ring\n";
+		// cerr << "coming out of remove_markers" << endl;
+
+		to_remove_markers = new_board->detect_success(polarity);
+	}
+
+	// cerr << "Generated board\n";
 	
 	return new_board;
 }
 
-Ring* Solver::decide_remove_ring()
+Ring* Solver::decide_remove_ring(Board* board)
 {
-	return (*current_board->get_my_rings())[0];
+	return (*board->get_my_rings())[0];
 }
 
