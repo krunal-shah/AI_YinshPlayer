@@ -1,5 +1,6 @@
 import argparse
 import socket,sys,json,pdb
+import time
 
 from Communicator import Communicator
 
@@ -153,6 +154,8 @@ class Server:
                                 if not data:
                                         break
                                 print data, 'Received from client 0'
+                                # if len(data.replace("\"data\": ","$").split("$")[1]) > 10:
+                                #     time.sleep(30)
                                 data = json.loads(data)
                                 if data['action'] == 'FINISH' or data['action'] == 'KILLPROC':
                                         if not self.log_file_handle is None:
@@ -161,6 +164,9 @@ class Server:
                                 data = self.RecvDataFromClient(client_1)
                                 self.SendData2Client(client_0, data)
                                 print data, 'Received from client 1'
+                                print data.replace("\"data\": ","$").split("$")[1]
+                                # if len(data.replace("\"data\": ","$").split("$")[1]) > 10:
+                                #     time.sleep(30)
                                 if not data:
                                         break
                                 data = json.loads(data)

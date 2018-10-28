@@ -99,6 +99,7 @@ int Board::score()
 
 	int upper = 4*board_size-1;
 	int lower = 2*board_size+1;
+	int corner = 3*(board_size-1);
 
 	queue<int> lastfive;
 	pair<char, void*> current_elem;
@@ -110,9 +111,9 @@ int Board::score()
 	int opp_completed_rings = 5 - no_opp_rings();
 
 	if(my_completed_rings >= 3)
-		return INT_MAX;
+		return INT_MAX - 10;
 	if(opp_completed_rings >= 3)
-		return INT_MIN;
+		return INT_MIN + 10;
 	
 	pair<int, int> current_pos;
 	int current_index;
@@ -124,6 +125,11 @@ int Board::score()
 		for (int offset = lower; offset <= upper; offset++)
 		{
 			current_pos = make_pair(board_size, offset);
+
+			if(out_of_bounds(current_pos))
+			{
+				current_pos = make_pair(board_size-1, corner);
+			}
 
 			while(!out_of_bounds(current_pos))
 			{
@@ -182,24 +188,24 @@ int Board::score()
 
 				lastfive.push(current_index);
 
-				score += elems_lastfive*abs(elems_lastfive);
+				score += elems_lastfive;
 				if(elems_lastfive == 5 && rings_lastfive <= 1)
 				{
-					if(my_completed_rings == 2)
+					if(my_completed_rings >= 2)
 					{
-						score = INT_MAX;
+						score = INT_MAX - 10;
 						return score;
 					}
-					score += 1000;
+					score += 10000;
 				}
 				else if(elems_lastfive == -5 && rings_lastfive <= 1)
 				{
-					if(opp_completed_rings == 2)
+					if(opp_completed_rings >= 2)
 					{
-						score = INT_MIN;
+						score = INT_MIN + 10;
 						return score;
 					}
-					score -= 1000;
+					score -= 10000;
 				}
 				
 				current_pos = get_next_position(current_pos, direction);;
@@ -209,6 +215,7 @@ int Board::score()
 
 		upper += board_size; // upper could be 6*board_size
 		lower += board_size;
+		corner += board_size-1;
 	} 
 
 	score += my_completed_rings*1000000;
