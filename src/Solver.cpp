@@ -393,8 +393,11 @@ pair<int, vector<int> > Solver::alpha_beta(Board* temp, int depth, int final_dep
 			}
 		}
 
-		// cerr << "Depth = " << depth << "Move is " << neighbours[i].first.first << " " << neighbours[i].first.second << " " << neighbours[i].second.first << " " << neighbours[i].second.second << " ";
-		// cerr << score << "\n";
+		if (depth == 0)
+		{
+			cerr << "Depth = " << depth << " Move is " << neighbours[i].first.first << " " << neighbours[i].first.second << " " << neighbours[i].second.first << " " << neighbours[i].second.second << " ";
+			cerr << score << "\n";
+		}
 	}
 	// cerr << "\n";
 

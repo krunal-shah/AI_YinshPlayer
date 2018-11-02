@@ -111,9 +111,9 @@ int Board::score()
 	int opp_completed_rings = 5 - no_opp_rings();
 
 	if(my_completed_rings >= 3)
-		return INT_MAX - 10;
+		return INT_MAX - 10 - opp_completed_rings*1000000;
 	if(opp_completed_rings >= 3)
-		return INT_MIN + 10;
+		return INT_MIN + 10 + my_completed_rings*1000000;
 	
 	pair<int, int> current_pos;
 	int current_index;
@@ -193,7 +193,7 @@ int Board::score()
 				{
 					if(my_completed_rings >= 2)
 					{
-						score = INT_MAX - 10;
+						score = INT_MAX - 10 - opp_completed_rings*1000000;
 						return score;
 					}
 					score += 10000;
@@ -202,7 +202,7 @@ int Board::score()
 				{
 					if(opp_completed_rings >= 2)
 					{
-						score = INT_MIN + 10;
+						score = INT_MIN + 10 + my_completed_rings*1000000;
 						return score;
 					}
 					score -= 10000;

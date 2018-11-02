@@ -5,7 +5,7 @@ import numpy as np
 import os
 import sys
 import time
-#from multiset import Multiset
+from multiset import Multiset
 import copy
 
 from jinja2 import Environment, FileSystemLoader
