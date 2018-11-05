@@ -5,7 +5,8 @@
 #include<fstream>
 #include<vector>
 #include <unordered_map>
-#include <queue> 
+#include <queue>
+#include <climits>
 #include "Ring.h"
 #include "Marker.h"
 #include "Util.h"
