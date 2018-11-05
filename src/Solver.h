@@ -15,10 +15,11 @@ private:
     Board* current_board;
     int turns;
     bool start;
+    int consecutive_markers;
+    int board_size;
 
 public:
-    Solver(int, int, int);
-    Solver(Solver* base_solver);
+    Solver(int, int, int, int);
     void make_opp_move(string move);
     string move();
     pair<int, vector<int> > alpha_beta(Board* temp, int depth, int final_depth, int &counter, int alpha, int beta);

@@ -8,15 +8,16 @@ using namespace std;
 int main(int argc, char** argv) 
 {
 	
-	int player_id, board_size, time_limit;
-	string move;
+	int player_id, board_size, time_limit, consecutive_rings;
 
 	// Get input from server about game specifications
-	cin >> player_id >> board_size >> time_limit;
+	// cin >> move;
+	cin >> player_id >> board_size >> time_limit >> consecutive_rings;
+	
 	int turn = 1;
 	int moves = 0;
-	
-	Solver* solver = new Solver(player_id, board_size, time_limit);
+
+	Solver* solver = new Solver(player_id, board_size, time_limit, consecutive_rings);
 	
 	if(player_id == 2) 
 	{

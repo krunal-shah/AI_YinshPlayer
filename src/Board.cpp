@@ -1,7 +1,7 @@
 #include "Board.h"
 
 
-Board::Board(int bsize)
+Board::Board(int bsize, int cmarkers)
 {
     board_size = bsize;
     int max_positions = 3*board_size*(board_size-1) + 6*board_size + 1;
@@ -11,11 +11,13 @@ Board::Board(int bsize)
     pair<char, void*> temp = make_pair('n', nullp);
     fill(configuration.begin(), configuration.end(), temp);
     reality = 1;
+    consecutive_markers = cmarkers;
 }
 
 Board::Board(Board* base_board)
 {
     board_size = base_board->get_board_size();
+    consecutive_markers = base_board->get_consecutive_markers();
     int max_positions = 3*board_size*(board_size-1) + 6*board_size + 1;
     configuration.resize(max_positions);
     reality = 0;
@@ -107,8 +109,8 @@ int Board::score()
 	int elems_lastfive = 0;
 	int rings_lastfive = 0;
 
-	int my_completed_rings = 5 - no_my_rings();
-	int opp_completed_rings = 5 - no_opp_rings();
+	int my_completed_rings = board_size - no_my_rings();
+	int opp_completed_rings = board_size - no_opp_rings();
 
 	if(my_completed_rings >= 3)
 		return INT_MAX - 10 - opp_completed_rings*1000000;
@@ -141,7 +143,7 @@ int Board::score()
 				current_elem = configuration[current_index];
 				// cerr << "At check 3" << endl;
 
-				if(lastfive.size() == 5)
+				if(lastfive.size() == consecutive_markers)
 				{
 					popped_elem = configuration[lastfive.front()];
 					lastfive.pop();
@@ -189,7 +191,7 @@ int Board::score()
 				lastfive.push(current_index);
 
 				score += elems_lastfive;
-				if(elems_lastfive == 5 && rings_lastfive <= 1)
+				if(elems_lastfive == consecutive_markers && rings_lastfive <= 1)
 				{
 					if(my_completed_rings >= 2)
 					{
@@ -198,7 +200,7 @@ int Board::score()
 					}
 					score += 10000;
 				}
-				else if(elems_lastfive == -5 && rings_lastfive <= 1)
+				else if(elems_lastfive == -1*consecutive_markers && rings_lastfive <= 1)
 				{
 					if(opp_completed_rings >= 2)
 					{
@@ -267,7 +269,7 @@ vector<int> Board::detect_success(int polarity)
 				current_elem = configuration[current_index];
 				// cerr << "At check 3" << endl;
 
-				if(lastfive.size() == 5)
+				if(lastfive.size() == consecutive_markers)
 				{
 					popped_elem = configuration[lastfive.front()];
 					lastfive.pop();
@@ -324,7 +326,7 @@ vector<int> Board::detect_success(int polarity)
 				// 	cerr << current_elem.first << " " << current_index << endl;
 				// }
 
-				if(elems_lastfive == 5*polarity && rings_lastfive == 0)
+				if(elems_lastfive == consecutive_markers*polarity && rings_lastfive == 0)
 				{
 					vector<int> temp_ans(4);
 					Marker* cur_mark = (Marker*)(current_elem.second);
@@ -436,6 +438,11 @@ void Board::add_marker(Marker* piece)
 int Board::get_board_size()
 {
     return board_size;
+}
+
+int Board::get_consecutive_markers()
+{
+	return consecutive_markers;
 }
 
 pair<char, void*> Board::get_configuration(int i)
@@ -602,7 +609,7 @@ void Board::remove_markers(Marker* first_marker, Marker* last_marker)
 	else
 		markers = &opp_markers;
 
-	for (int i=0;i<5;i++)
+	for (int i=0;i<consecutive_markers;i++)
 	{
 		int index = get_board_index(current_position);
 		set_configuration('n', NULL, index);

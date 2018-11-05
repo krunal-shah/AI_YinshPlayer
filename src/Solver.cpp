@@ -1,18 +1,13 @@
 #include "Solver.h"
 
-Solver::Solver(int player_id, int board_size, int time_limit)
+Solver::Solver(int player_id, int bsize, int time_limit, int cmarkers)
 {
-    current_board = new Board(board_size);
+    current_board = new Board(bsize, cmarkers);
     turns = 1;
     start = true;
     srand(1234);
-}
-
-Solver::Solver(Solver* base_solver)
-{
-    turns = base_solver->turns;
-    Board* new_board = new Board(base_solver->current_board);
-    current_board = new_board;
+    board_size = bsize;
+    consecutive_markers = cmarkers;
 }
 
 
@@ -22,10 +17,10 @@ Solver::Solver(Solver* base_solver)
 string Solver::move()
 {
 	string move_str;
-	if(current_board->no_my_rings() < 5 && start)
+	if(current_board->no_my_rings() < board_size && start)
 	{
 		int a = 0, b = 0;
-		a = rand()%5;
+		a = rand()%board_size;
 		if(a != 0)
 			b = rand()%(a*6);
 		turns++;
@@ -34,7 +29,7 @@ string Solver::move()
 		while(current_board->get_configuration(temp_index).first != 'n')
 		{
 			b = 0;
-			a = rand()%5;
+			a = rand()%board_size;
 			if(a!=0)
 				b = rand()%(a*6);
 			pair<int,int> temp_pos = make_pair(a,b);
@@ -46,7 +41,7 @@ string Solver::move()
 		
 		move_str = "P " + to_string(a) + " " + to_string(b) + " \n";
 
-		if(current_board->no_my_rings() == 5)
+		if(current_board->no_my_rings() == board_size)
 			start = false;
 	}
 	else
@@ -80,7 +75,7 @@ string Solver::move()
 
 		int counter = 0;
 		
-		pair< int, vector<int> > move = Solver::alpha_beta(current_board, 0, 4, counter, INT_MIN, INT_MAX);
+		pair< int, vector<int> > move = Solver::alpha_beta(current_board, 0, 3, counter, INT_MIN, INT_MAX);
 		
 		pair<int,int> a = make_pair(move.second[0], move.second[1]);
 		pair<int,int> b = make_pair(move.second[2], move.second[3]);
@@ -393,11 +388,11 @@ pair<int, vector<int> > Solver::alpha_beta(Board* temp, int depth, int final_dep
 			}
 		}
 
-		if (depth == 0)
-		{
-			cerr << "Depth = " << depth << " Move is " << neighbours[i].first.first << " " << neighbours[i].first.second << " " << neighbours[i].second.first << " " << neighbours[i].second.second << " ";
-			cerr << score << "\n";
-		}
+		// if (depth == 0)
+		// {
+		// 	cerr << "Depth = " << depth << " Move is " << neighbours[i].first.first << " " << neighbours[i].first.second << " " << neighbours[i].second.first << " " << neighbours[i].second.second << " ";
+		// 	cerr << score << "\n";
+		// }
 	}
 	// cerr << "\n";
 

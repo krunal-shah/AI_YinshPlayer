@@ -21,9 +21,10 @@ private:
     vector< pair< char, void*> > configuration; 
     int board_size;
     int reality;
+    int consecutive_markers;
 
 public:
-    Board(int);
+    Board(int, int);
     Board(Board* base_board);
     int no_my_rings();
     int no_opp_rings();
@@ -37,6 +38,7 @@ public:
     vector<Ring*>* get_opp_rings();
 
     int get_board_size();
+    int get_consecutive_markers();
     bool out_of_bounds(pair<int,int>);
 
     vector<pair <int, int> > get_possible_positions(pair<int, int> current_position, int direction);

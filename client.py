@@ -171,9 +171,16 @@ class Client(Communicator):
 		end_time = time.time()
 		retData = None          
 		if(data == None):                                                               
-			print 'ERROR : THIS CLIENT STOPPED UNEXPECTEDLY OR TIMED OUT'
-			super(Client,self).closeChildProcess()                  
-			retData = {'meta':'UNEXPECTED STOP','action':'KILLPROC','data':''}
+			# 1 Milli Second Default
+			time_delta = max(1,int((end_time - start_time) * 1000))
+			self.GAME_TIMER -= time_delta
+			if(self.GAME_TIMER > 0):
+				print 'ERROR : THIS CLIENT STOPPED UNEXPECTEDLY OR TIMED OUT'
+				super(Client,self).closeChildProcess()                  
+				retData = {'meta':'UNEXPECTED STOP','action':'KILLPROC','data':''}
+			else:
+				retData = {'meta':'TIMEOUT','action':'FINISH','data':''}
+				print 'ERROR : THIS CLIENT RAN OUT OF TIME!' 
 		else:                   
 			# 1 Milli Second Default
 			time_delta = max(1,int((end_time - start_time) * 1000))
@@ -223,12 +230,13 @@ def game_loop(args):
 	player_id = server_string_list[0]
 	board_size = int(server_string_list[1])
 	game_timer = int(server_string_list[2])
+	seq_length = int(server_string_list[3])
 	client.setGameTimer(game_timer)
 	print '***********************************\n'
 	print '-> You are player ' + str(player_id)
 	print '-> You are alloted a time of ' + str(game_timer) + 's\n'
 	print '***********************************\n'
-	game = Game(board_size, args.mode, game_timer)        
+	game = Game(board_size, seq_length, args.mode, game_timer)        
 
 	client.SendData2Process(server_string) ## Initialize Process
 
@@ -247,7 +255,15 @@ def game_loop(args):
 		### Execute Current Player's Move
 		move = client.RecvDataFromProcess()                                             
 		if move['action'] == 'KILLPROC':
-			move['meta'] = move['meta'] + ' BY PLAYER ' + player_id
+			move['meta'] = move['meta'] + ' BY PLAYER ' + player_id + \
+							' : Player ' +  str(player_id) + ' SCORE : ' + str(game.get_score(player_id, player_id)) +  \
+							' : Player ' +  str(int(player_id)%2+1) + ' SCORE : ' + str(game.get_score(int(player_id)%2+1, player_id))
+			client.SendData2Server(move)
+			break
+		if move['action'] == 'FINISH': # TIMEOUT
+			move['meta'] = move['meta'] + ' BY PLAYER ' + player_id + \
+							' : Player ' +  str(player_id) + ' SCORE : ' + str(game.get_score(player_id, player_id)) +  \
+							' : Player ' +  str(int(player_id)%2+1) + ' SCORE : ' + str(game.get_score(int(player_id)%2+1, player_id))
 			client.SendData2Server(move)
 			break
 		move['data'] = move['data'].strip()
@@ -262,23 +278,24 @@ def game_loop(args):
 		if success == 0:
 			message['data'] = ''
 			message['action'] = 'KILLPROC'
-			message['meta'] = 'INVALID MOVE BY PLAYER ' + player_id
+			message['meta'] = 'INVALID MOVE BY PLAYER ' + player_id + \
+								' : Player ' +  str(player_id) + ' SCORE : ' + str(game.get_score(player_id, player_id)) +  \
+								' : Player ' +  str(int(player_id)%2+1) + ' SCORE : ' + str(game.get_score(int(player_id)%2+1, player_id))
 			print 'INVALID MOVE ON THIS CLIENT'
-			time.sleep(60)
 		elif success == 1:
 			message = move
 		elif success == 2:
 			message['action'] = 'FINISH'
 			message['data'] = move['data']
-			if success == 2:
-				message['meta'] = 'Player ' +  player_id + ' wins WITH SCORE : ' + str(game.get_score(player_id))
-				print 'YOU WIN!'
-				if player_id == '1':
-					print 'Your Score : ' + str(game.get_score(1))
-					print 'Opponent\'s Score : ' + str(game.get_score(2))
-				else:
-					print 'Your Score : ' + str(game.get_score(2))
-					print 'Opponent\'s Score : ' + str(game.get_score(1))
+			message['meta'] = 'Player ' +  str(player_id) + ' SCORE : ' + str(game.get_score(player_id)) +  \
+							' : Player ' +  str(int(player_id)%2+1) + ' SCORE : ' + str(game.get_score(int(player_id)%2+1))
+			print 'YOU WIN!'
+			if player_id == '1':
+				print 'Your Score : ' + str(game.get_score(1))
+				print 'Opponent\'s Score : ' + str(game.get_score(2))
+			else:
+				print 'Your Score : ' + str(game.get_score(2))
+				print 'Opponent\'s Score : ' + str(game.get_score(1))
 
 		client.SendData2Server(message)
 		if message['action'] == 'FINISH' or message['action'] == 'KILLPROC':
@@ -288,7 +305,7 @@ def game_loop(args):
 		move = client.RecvDataFromServer()
 		if move:
 			move = move.strip()
-			if player_id == 1:
+			if player_id == '1':
 				print "Player 2 played : " + move
 			else:
 				print "Player 1 played : " + move
