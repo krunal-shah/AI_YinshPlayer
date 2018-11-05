@@ -1,11 +1,11 @@
 #include "Solver.h"
 
-Solver::Solver(int player_id, int bsize, int time_limit, int cmarkers)
+Solver::Solver(int player_id, int bsize, int time_limit, int cmarkers, int seed_value)
 {
     current_board = new Board(bsize, cmarkers);
     turns = 1;
     start = true;
-    srand(1234);
+    srand(seed_value);
     board_size = bsize;
     consecutive_markers = cmarkers;
 }
@@ -39,7 +39,7 @@ string Solver::move()
 		
 		current_board->add_ring(new_ring);
 		
-		move_str = "P " + to_string(a) + " " + to_string(b) + " \n";
+		move_str = "P " + to_string(a) + " " + to_string(b) + "\n";
 
 		if(current_board->no_my_rings() == board_size)
 			start = false;

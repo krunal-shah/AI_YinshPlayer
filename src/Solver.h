@@ -19,7 +19,7 @@ private:
     int board_size;
 
 public:
-    Solver(int, int, int, int);
+    Solver(int, int, int, int, int);
     void make_opp_move(string move);
     string move();
     pair<int, vector<int> > alpha_beta(Board* temp, int depth, int final_depth, int &counter, int alpha, int beta);
