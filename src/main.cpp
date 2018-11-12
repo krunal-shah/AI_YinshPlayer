@@ -17,7 +17,8 @@ int main(int argc, char** argv)
 	int turn = 1;
 	int moves = 0;
 
-	Solver* solver = new Solver(player_id, board_size, time_limit, consecutive_rings);
+	int seed_value = 1234;
+	Solver* solver = new Solver(player_id, board_size, time_limit, consecutive_rings, seed_value);
 	
 	if(player_id == 2) 
 	{

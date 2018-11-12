@@ -67,7 +67,7 @@ string Solver::move()
 		}
 
 
-		if(current_board->no_my_rings() <= 2)
+		if(current_board->no_my_rings() <= board_size-3)
 		{
 			move_str = move_str + "\n";
 			return move_str;
@@ -388,11 +388,11 @@ pair<int, vector<int> > Solver::alpha_beta(Board* temp, int depth, int final_dep
 			}
 		}
 
-		// if (depth == 0)
-		// {
-		// 	cerr << "Depth = " << depth << " Move is " << neighbours[i].first.first << " " << neighbours[i].first.second << " " << neighbours[i].second.first << " " << neighbours[i].second.second << " ";
-		// 	cerr << score << "\n";
-		// }
+		if (depth == 0)
+		{
+			cerr << "Depth = " << depth << " Move is " << neighbours[i].first.first << " " << neighbours[i].first.second << " " << neighbours[i].second.first << " " << neighbours[i].second.second << " ";
+			cerr << score << "\n";
+		}
 	}
 	// cerr << "\n";
 

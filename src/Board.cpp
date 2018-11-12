@@ -107,6 +107,7 @@ int Board::score()
 	pair<char, void*> current_elem;
 	pair<char, void*> popped_elem;
 	int elems_lastfive = 0;
+	int my_elems_lastfive = 0;
 	int rings_lastfive = 0;
 
 	int my_completed_rings = board_size - no_my_rings();
@@ -152,7 +153,10 @@ int Board::score()
 					{
 						Ring* popped_ring = (Ring*)popped_elem.second;
 						if(popped_ring->get_polarity() == 1)
+						{
 							elems_lastfive --;
+							my_elems_lastfive --;
+						}
 						else
 							elems_lastfive ++;
 
@@ -162,7 +166,10 @@ int Board::score()
 					{
 						Marker* popped_marker = (Marker*)popped_elem.second;
 						if(popped_marker->get_polarity() == 1)
+						{
 							elems_lastfive --;
+							my_elems_lastfive --;
+						}
 						else
 							elems_lastfive ++;
 					}
@@ -173,7 +180,10 @@ int Board::score()
 				{
 					Ring* current_ring = (Ring*)current_elem.second;
 					if(current_ring->get_polarity() == 1)
+					{
 						elems_lastfive ++;
+						my_elems_lastfive ++;
+					}
 					else
 						elems_lastfive --;
 
@@ -183,7 +193,10 @@ int Board::score()
 				{
 					Marker* current_marker = (Marker*)current_elem.second;
 					if(current_marker->get_polarity() == 1)
+					{
 						elems_lastfive ++;
+						my_elems_lastfive ++;
+					}
 					else
 						elems_lastfive --;
 				}
@@ -191,24 +204,29 @@ int Board::score()
 				lastfive.push(current_index);
 
 				score += elems_lastfive;
-				if(elems_lastfive == consecutive_markers && rings_lastfive <= 1)
+				if(my_elems_lastfive == elems_lastfive)
 				{
-					if(my_completed_rings >= 2)
-					{
-						score = INT_MAX - 10 - opp_completed_rings*1000000;
-						return score;
-					}
-					score += 10000;
+					score += 5*my_elems_lastfive;
 				}
-				else if(elems_lastfive == -1*consecutive_markers && rings_lastfive <= 1)
-				{
-					if(opp_completed_rings >= 2)
-					{
-						score = INT_MIN + 10 + my_completed_rings*1000000;
-						return score;
-					}
-					score -= 10000;
-				}
+
+				// if(elems_lastfive == consecutive_markers && rings_lastfive <= 1)
+				// {
+				// 	if(my_completed_rings >= 2)
+				// 	{
+				// 		score = INT_MAX - 10 - opp_completed_rings*1000000;
+				// 		return score;
+				// 	}
+				// 	score += 10000;
+				// }
+				// else if(elems_lastfive == -1*consecutive_markers && rings_lastfive <= 1)
+				// {
+				// 	if(opp_completed_rings >= 2)
+				// 	{
+				// 		score = INT_MIN + 10 + my_completed_rings*1000000;
+				// 		return score;
+				// 	}
+				// 	score -= 10000;
+				// }
 				
 				current_pos = get_next_position(current_pos, direction);;
 			}
@@ -222,6 +240,16 @@ int Board::score()
 
 	score += my_completed_rings*1000000;
 	score -= opp_completed_rings*1000000;
+
+	int difference = my_completed_rings - opp_completed_rings;
+	if(abs(difference) == 1)
+	{
+		return score/(my_completed_rings + opp_completed_rings);
+	}
+	else if(difference == 0 && opp_completed_rings > 0)
+	{
+		return score/(my_completed_rings + opp_completed_rings);
+	}
 
 	return score;
 }

@@ -1,9 +1,10 @@
 from __future__ import print_function 
+
 from game import Game
+import math
 import random
 import sys
 import time
-import math
 
 class RandomPlayer:
 
