@@ -149,7 +149,7 @@ class Server:
                         data = {'meta':'', 'action':'INIT','data':dataString}
                         self.SendData2Client(client_1, json.dumps(data))                        
                         while(True):
-                                ih = raw_input("Waiting:")
+                                # ih = raw_input("Waiting:")
                                 data = self.RecvDataFromClient(client_0)
                                 self.SendData2Client(client_1, data)
                                 if not data:

@@ -208,6 +208,10 @@ int Board::score()
 				{
 					score += 5*my_elems_lastfive;
 				}
+				if(my_elems_lastfive == 0)
+				{
+					score += 5*elems_lastfive;
+				}
 
 				// if(elems_lastfive == consecutive_markers && rings_lastfive <= 1)
 				// {
@@ -420,8 +424,6 @@ vector< pair<int, int> > Board::get_possible_positions(pair<int, int> current_po
 		// cerr<<"hello?"<<endl;
 
 	}
-	// cerr<<endl;
-
 	return positions;
 
 }
